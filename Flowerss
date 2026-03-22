@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Para ti 🩵</title>
+<style>
+    body {
+        background: linear-gradient(to top, #1a1a1a, #333);
+        color: white;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+    }
+
+    h1 {
+        margin-top: 20px;
+    }
+
+    .flower {
+        position: absolute;
+        font-size: 30px;
+        animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+        0% { transform: translateY(-10vh); }
+        100% { transform: translateY(110vh); }
+    }
+
+    .mensaje {
+        margin-top: 30px;
+        font-size: 20px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+    }
+
+    button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        border: none;
+        background: #ff4d6d;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 10px;
+    }
+
+    button:hover {
+        background: #ff1e4d;
+    }
+</style>
+</head>
+<body>
+
+<h1> Para mi jeii 🩵</h1>
+
+<div class="mensaje" id="texto">
+    Aún te extraño...
+</div>
+
+<button onclick="cambiarMensaje()">Haz clic 💌</button>
+
+<script>
+    // Crear flores cayendo
+    function crearFlor() {
+        const flor = document.createElement("div");
+        flor.classList.add("flower");
+        flor.innerHTML = "🌸";
+        flor.style.left = Math.random() * 100 + "vw";
+        flor.style.animationDuration = (Math.random() * 3 + 2) + "s";
+        document.body.appendChild(flor);
+
+        setTimeout(() => {
+            flor.remove();
+        }, 5000);
+    }
+
+    setInterval(crearFlor, 300);
+
+    // Mensajes
+    const mensajes = [
+        "Te extraño por tus ojos...",
+        "Te extraño por tus cariños...",
+        "Te extraño por tus caricias...",
+        "Te extraño por tu compañía...",
+        "Te extraño por tu humor...",
+        "Te extraño por todo lo que eramos juntos...",
+        "Y aun asi... aún te extraño mi niña 🩵"
+    ];
+
+    let i = 0;
+
+    function cambiarMensaje() {
+        document.getElementById("texto").innerText = mensajes[i];
+        i = (i + 1) % mensajes.length;
+    }
+</script>
+
+</body>
+</html>
