@@ -229,7 +229,18 @@
   .game-center { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; text-align: center; padding: 60px 16px 16px; z-index: 3; }
   .game-center p { font: 600 1.2rem var(--display); color: #1f5671; max-width: 22rem; }
   .gj { position: absolute; left: 0; bottom: -110px; border: 0; background: none; padding: 6px; touch-action: manipulation; z-index: 1; will-change: transform; }
-  body.jugando .jellies .jelly { pointer-events: none; }
+  body.jugando { overflow: hidden; }
+  body.jugando .jellies { display: none; }
+  .full { position: fixed !important; inset: 0; height: auto !important; border-radius: 0 !important; border: 0 !important; z-index: 45; }
+  .full .hud { top: calc(12px + env(safe-area-inset-top, 0px)); left: calc(12px + env(safe-area-inset-left, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); }
+  .hud-x { display: none; border: 0; background: rgba(255,255,255,.9); border-radius: 999px; width: 38px; height: 38px; font: 700 1.05rem var(--display); color: #1f5671; }
+  .full .hud-x { display: block; }
+  .game-center .row { justify-content: center; }
+  /* Juego de saltar */
+  .jump { position: relative; height: 480px; border-radius: 24px; overflow: hidden; border: 2px solid var(--line); background: linear-gradient(#ffe1ea, var(--sea)); }
+  .jump canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  .jump .hud { color: var(--berry); }
+  .jump .game-center p { color: var(--berry); }
 
   /* ---------- Vales ---------- */
   .coupons { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
@@ -434,16 +445,28 @@
   <section class="panel">
     <span class="eyebrow">Estación 7 · Juego</span>
     <h2>Atrapa medusitas</h2>
-    <p class="lead">Tienes 25 segundos para tocar todas las medusas que puedas antes de que se escapen. Las doradas valen 3.</p>
+    <p class="lead">Tienes 25 segundos para tocar todas las medusas que puedas antes de que se escapen. Las doradas valen 3. Se juega en pantalla completa.</p>
     <div class="game" id="game">
-      <div class="hud"><span>⏱ <b id="g-time">25</b>s</span><span>Atrapadas: <b id="g-score">0</b></span><span>Récord de hoy: <b id="g-best">0</b></span></div>
-      <div class="game-center" id="g-center"><p id="g-text">¿Lista, amoricto?</p><button class="cta mint" id="g-start">Empezar</button></div>
+      <div class="hud"><span>⏱ <b id="g-time">25</b>s</span><span>Atrapadas: <b id="g-score">0</b></span><span>Récord de hoy: <b id="g-best">0</b></span><button class="hud-x" id="g-x" aria-label="Salir del juego">✕</button></div>
+      <div class="game-center" id="g-center"><p id="g-text">¿Lista, amoricto?</p><div class="row"><button class="cta mint" id="g-start">Empezar</button><button class="cta" id="g-exit" hidden>Salir</button></div></div>
+    </div>
+  </section>
+
+  <!-- JUEGO 2 -->
+  <section class="panel">
+    <span class="eyebrow">Estación 8 · Juego</span>
+    <h2>Salta, dientito</h2>
+    <p class="lead">Ayuda al dientito a subir saltando de base en base. Las bases con resorte te lanzan altísimo, las azules se mueven y las de galleta se rompen después de un salto. Mantén el dedo en la pantalla y el dientito se mueve hacia donde lo pongas. Atrapa corazones para ganar puntos extra.</p>
+    <div class="jump" id="jump">
+      <canvas id="jump-canvas" aria-label="Juego Salta, dientito"></canvas>
+      <div class="hud"><span>Altura: <b id="j-score">0</b></span><span>Récord de hoy: <b id="j-best">0</b></span><button class="hud-x" id="j-x" aria-label="Salir del juego">✕</button></div>
+      <div class="game-center" id="j-center"><p id="j-text">¿Qué tan alto llegas, mi amur?</p><div class="row"><button class="cta" id="j-start">Empezar</button><button class="cta mint" id="j-exit" hidden>Salir</button></div></div>
     </div>
   </section>
 
   <!-- VALES -->
   <section class="panel">
-    <span class="eyebrow">Estación 8 · Vales de mimos</span>
+    <span class="eyebrow">Estación 9 · Vales de mimos</span>
     <h2>Vales de Daniel, sin fecha de vencimiento</h2>
     <p class="lead">Voltea cada vale para ver tu premio. Cuando lo quieras, aprieta "Canjear" y yo cumplo.</p>
     <div class="coupons" id="coupons"></div>
@@ -451,7 +474,7 @@
 
   <!-- NOTA -->
   <section class="panel">
-    <span class="eyebrow">Estación 9 · Tu nota del día</span>
+    <span class="eyebrow">Estación 10 · Tu nota del día</span>
     <h2>Cuéntale a Daniel cómo te fue</h2>
     <p class="lead" id="nota-lead">Lo que escribas aquí aparece en tu informe de hoy.</p>
     <label for="nota" class="hint">Tu nota</label>
@@ -461,7 +484,7 @@
 
   <!-- CARTA -->
   <section class="panel">
-    <span class="eyebrow">Estación 10 · Correo para ti</span>
+    <span class="eyebrow">Estación 11 · Correo para ti</span>
     <h2>Tienes una carta de Daniel</h2>
     <button class="env-btn" id="env" aria-label="Abrir la carta">
       <svg viewBox="0 0 300 190" aria-hidden="true">
@@ -494,7 +517,7 @@
   /* ================= Diario (guardado diario) ================= */
   const HOY = new Date().toLocaleDateString('en-CA');
   const INICIO = '2026-11-24'; // día 1 de recuperación (día de la cirugía)
-  const vacio = f => ({ fecha: f, dolor: null, animo: null, checks: {}, agua: 0, abrazos: 0, juego: 0, razones: 0, nota: '' });
+  const vacio = f => ({ fecha: f, dolor: null, animo: null, checks: {}, agua: 0, abrazos: 0, juego: 0, salto: 0, razones: 0, nota: '' });
   const TAREAS = [
     'Comí algo blandito y fresquito', 'Tomé mis medicinas a la hora', 'Me puse hielito por fuera de la cara',
     'Hice mis enjuagues como dijo la doctora', 'Cepillé con muchísimo cuidado', 'Tomé suficiente agua',
@@ -895,13 +918,13 @@
   function gStart() {
     gScore = 0; gTime = 25; gOn = true; $('g-score').textContent = 0; $('g-time').textContent = 25;
     gCenter.hidden = true; game.querySelectorAll('.gj').forEach(n => n.remove());
-    document.body.classList.add('jugando');
+    abrirFull(game); $('g-exit').hidden = true;
     gSpawn = setInterval(gjelly, 520); gjelly();
     if (!gRunning) { gRunning = true; gLast = 0; requestAnimationFrame(gLoop); }
     gClock = setInterval(() => { gTime--; $('g-time').textContent = gTime; if (gTime <= 0) gEnd(); }, 1000);
   }
   function gEnd() {
-    gOn = false; clearInterval(gSpawn); clearInterval(gClock); document.body.classList.remove('jugando');
+    gOn = false; clearInterval(gSpawn); clearInterval(gClock); $('g-exit').hidden = false;
     setTimeout(() => game.querySelectorAll('.gj').forEach(n => n.remove()), 400);
     const record = gScore > (hoy.juego || 0);
     if (record) { hoy.juego = gScore; guardar(); paintBest(); rain(50); }
@@ -910,6 +933,179 @@
     gCenter.hidden = false;
   }
   $('g-start').addEventListener('click', gStart);
+  $('g-exit').addEventListener('click', () => { cerrarFull(game); $('g-exit').hidden = true; });
+  $('g-x').addEventListener('click', () => { if (gOn) gEnd(); cerrarFull(game); $('g-exit').hidden = true; });
+
+  /* Pantalla completa para los juegos */
+  function abrirFull(el) {
+    el.classList.add('full'); document.body.classList.add('jugando');
+    try { const r = document.documentElement, f = r.requestFullscreen || r.webkitRequestFullscreen; if (f) { const pr = f.call(r); if (pr && pr.catch) pr.catch(() => {}); } } catch {}
+  }
+  function cerrarFull(el) {
+    el.classList.remove('full'); document.body.classList.remove('jugando');
+    try { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {}); } catch {}
+  }
+
+  /* ================= Juego 2: Salta, dientito ================= */
+  const jumpBox = $('jump'), jc = $('jump-canvas'), jx = jc.getContext('2d'), jCenter = $('j-center');
+  const TOOTH = new Path2D('M50 52 C48 18 96 12 110 34 C124 12 172 18 170 52 C172 92 156 118 152 160 L68 160 C64 118 48 92 50 52 Z');
+  const PW = 37, PH = 44;
+  let JW = 0, JH = 0, jOn = false, jRaf = 0, jLast = 0, jp, plats, jHearts, camY, jScore, jBonus, jPointer = null, jShown = -1;
+  const jKeys = {};
+  function paintBestJ() { $('j-best').textContent = hoy.salto || 0; }
+  function jSize() {
+    const r = jumpBox.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+    JW = Math.max(r.width, 200); JH = Math.max(r.height, 300);
+    jc.width = JW * dpr; jc.height = JH * dpr; jx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function jPlat(y) {
+    const diff = Math.min(-y / 6000, 1), r = Math.random();
+    let type = 'n';
+    if (r < .13) type = 's';
+    else if (r < .23 + diff * .15) type = 'm';
+    else if (r < .31 + diff * .25) type = 'b';
+    return { x: Math.random() * (JW - 70), y, w: 70, type, dir: Math.random() < .5 ? -1 : 1, broken: false, fall: 0 };
+  }
+  function jAddAbove(top) {
+    const diff = Math.min(-top / 6000, 1);
+    const y = top - (55 + Math.random() * 30 + diff * 35);
+    const p = jPlat(y); plats.push(p);
+    if (p.type !== 'b' && Math.random() < .2) jHearts.push({ x: p.x + p.w / 2, y: p.y - 34, taken: false });
+    return y;
+  }
+  function jReset() {
+    jSize();
+    camY = 0; jScore = 0; jBonus = 0; jShown = -1;
+    jp = { x: JW / 2 - PW / 2, y: JH - 60 - PH, vx: 0, vy: -11, squash: 0 };
+    plats = [{ x: JW / 2 - 45, y: JH - 60, w: 90, type: 'n', dir: 1, broken: false, fall: 0 }];
+    jHearts = [];
+    let top = JH - 60;
+    while (top > -60) top = jAddAbove(top);
+  }
+  function jUpdate(dt) {
+    let target = 0;
+    if (jPointer != null) { const dx = jPointer - (jp.x + PW / 2); target = Math.max(-1, Math.min(1, dx / 50)); }
+    if (jKeys.l) target = -1; if (jKeys.r) target = 1;
+    jp.vx += (target * 7 - jp.vx) * Math.min(.25 * dt, 1);
+    jp.x += jp.vx * dt;
+    if (jp.x > JW) jp.x = -PW; if (jp.x < -PW) jp.x = JW;
+    const prevBottom = jp.y + PH;
+    jp.vy += .38 * dt; jp.y += jp.vy * dt;
+    const bottom = jp.y + PH;
+    for (const p of plats) {
+      if (p.type === 'm' && !p.broken) {
+        p.x += p.dir * (1.2 + Math.min(-p.y / 4000, 1.5)) * dt;
+        if (p.x < 0 || p.x + p.w > JW) { p.dir *= -1; p.x = Math.max(0, Math.min(JW - p.w, p.x)); }
+      }
+      if (p.broken) { p.fall += .5 * dt; p.y += p.fall * dt; continue; }
+      if (jp.vy > 0 && prevBottom <= p.y + 2 && bottom >= p.y && jp.x + PW - 6 > p.x && jp.x + 6 < p.x + p.w) {
+        jp.y = p.y - PH; jp.squash = 1;
+        if (p.type === 's') {
+          jp.vy = -19;
+          const r = jc.getBoundingClientRect(); spawn(r.left + p.x + p.w / 2, r.top + p.y - camY, 14, 1);
+        } else jp.vy = -11;
+        if (p.type === 'b') p.broken = true;
+      }
+    }
+    for (const h of jHearts) {
+      if (h.taken) continue;
+      if (Math.hypot(h.x - (jp.x + PW / 2), h.y - (jp.y + PH / 2)) < 28) {
+        h.taken = true; jBonus += 10;
+        const r = jc.getBoundingClientRect(); spawn(r.left + h.x, r.top + h.y - camY, 12, .9);
+      }
+    }
+    if (jp.y < camY + JH * .38) camY = jp.y - JH * .38;
+    jScore = Math.max(jScore, Math.floor((JH - 60 - PH - jp.y) / 10));
+    plats = plats.filter(p => p.y < camY + JH + 60);
+    jHearts = jHearts.filter(h => !h.taken && h.y < camY + JH + 60);
+    let top = Math.min(...plats.map(p => p.y));
+    while (top > camY - 80) top = jAddAbove(top);
+    const total = jScore + jBonus;
+    if (total !== jShown) { jShown = total; $('j-score').textContent = total; }
+    if (jp.y > camY + JH + 30) jEnd();
+  }
+  function rr(x, y, w, h, r) {
+    jx.beginPath(); jx.moveTo(x + r, y); jx.arcTo(x + w, y, x + w, y + h, r); jx.arcTo(x + w, y + h, x, y + h, r);
+    jx.arcTo(x, y + h, x, y, r); jx.arcTo(x, y, x + w, y, r); jx.closePath();
+  }
+  function jHeart(x, y, s) {
+    jx.beginPath(); jx.moveTo(x, y + s * .3);
+    jx.bezierCurveTo(x, y, x - s * .5, y, x - s * .5, y + s * .3);
+    jx.bezierCurveTo(x - s * .5, y + s * .6, x, y + s * .8, x, y + s);
+    jx.bezierCurveTo(x, y + s * .8, x + s * .5, y + s * .6, x + s * .5, y + s * .3);
+    jx.bezierCurveTo(x + s * .5, y, x, y, x, y + s * .3); jx.fill();
+  }
+  function jDraw(t = 0) {
+    const g = jx.createLinearGradient(0, 0, 0, JH); g.addColorStop(0, '#ffe1ea'); g.addColorStop(1, '#dff3fb');
+    jx.fillStyle = g; jx.fillRect(0, 0, JW, JH);
+    jx.fillStyle = 'rgba(255,255,255,.75)';
+    for (let i = 0; i < 6; i++) {
+      const span = JH + 120, cy = ((i * 170 - camY * .3) % span + span) % span - 60, cxp = (i * 137) % JW;
+      jx.beginPath(); jx.arc(cxp, cy, 18, 0, 7); jx.arc(cxp + 20, cy - 8, 22, 0, 7); jx.arc(cxp + 42, cy, 16, 0, 7); jx.fill();
+    }
+    jx.save(); jx.translate(0, -camY);
+    for (const p of plats) {
+      jx.globalAlpha = p.broken ? .55 : 1;
+      jx.fillStyle = p.type === 'm' ? '#86c5f2' : p.type === 'b' ? '#f2d27a' : '#f78fb0';
+      rr(p.x, p.y, p.w, 14, 7); jx.fill();
+      jx.fillStyle = 'rgba(255,255,255,.45)'; rr(p.x + 6, p.y + 3, p.w - 12, 4, 2); jx.fill();
+      if (p.type === 'b') { jx.strokeStyle = '#c9a24a'; jx.lineWidth = 2; jx.beginPath(); jx.moveTo(p.x + 22, p.y + 2); jx.lineTo(p.x + 28, p.y + 8); jx.lineTo(p.x + 24, p.y + 13); jx.moveTo(p.x + 48, p.y + 3); jx.lineTo(p.x + 44, p.y + 10); jx.stroke(); }
+      if (p.type === 's') {
+        const sx = p.x + p.w / 2;
+        jx.strokeStyle = '#23866b'; jx.lineWidth = 3; jx.lineJoin = 'round'; jx.beginPath(); jx.moveTo(sx - 7, p.y);
+        for (let k = 1; k <= 4; k++) jx.lineTo(sx + (k % 2 ? 7 : -7), p.y - k * 3.5);
+        jx.stroke(); jx.fillStyle = '#7ad9bd'; rr(sx - 11, p.y - 18, 22, 6, 3); jx.fill();
+      }
+    }
+    jx.globalAlpha = 1;
+    for (const h of jHearts) { jx.fillStyle = '#d6336c'; jHeart(h.x, h.y - 9 + Math.sin(t / 300 + h.x) * 3, 18); }
+    const sq = jp.squash;
+    jx.save();
+    jx.translate(jp.x + PW / 2, jp.y + PH); jx.scale(1 + .18 * sq, 1 - .22 * sq); jx.translate(-PW / 2, -PH);
+    jx.scale(.3, .3); jx.translate(-48, -12);
+    jx.fillStyle = '#fff'; jx.strokeStyle = '#f1c3d3'; jx.lineWidth = 8; jx.fill(TOOTH); jx.stroke(TOOTH);
+    const look = Math.max(-6, Math.min(6, jp.vx * 1.2));
+    jx.fillStyle = '#4a1630';
+    jx.beginPath(); jx.ellipse(88 + look, 84, 7, 10, 0, 0, 7); jx.fill();
+    jx.beginPath(); jx.ellipse(132 + look, 84, 7, 10, 0, 0, 7); jx.fill();
+    jx.fillStyle = '#ffb3c8';
+    jx.beginPath(); jx.ellipse(74, 104, 10, 6, 0, 0, 7); jx.fill();
+    jx.beginPath(); jx.ellipse(146, 104, 10, 6, 0, 0, 7); jx.fill();
+    jx.strokeStyle = '#4a1630'; jx.lineWidth = 5; jx.lineCap = 'round';
+    jx.beginPath(); jx.moveTo(98, 106); jx.quadraticCurveTo(110, jp.vy < -12 ? 126 : 118, 122, 106); jx.stroke();
+    jx.restore();
+    jx.restore();
+  }
+  function jLoop(t) {
+    if (!jOn) return;
+    const dt = jLast ? Math.min((t - jLast) / 16.67, 2.5) : 1; jLast = t;
+    jp.squash = Math.max(0, jp.squash - .08 * dt);
+    jUpdate(dt);
+    jDraw(t);
+    if (jOn) jRaf = requestAnimationFrame(jLoop);
+  }
+  function jStart() {
+    abrirFull(jumpBox); $('j-exit').hidden = true; jCenter.hidden = true;
+    requestAnimationFrame(() => { jReset(); $('j-score').textContent = 0; jOn = true; jLast = 0; jRaf = requestAnimationFrame(jLoop); });
+  }
+  function jEnd() {
+    jOn = false; cancelAnimationFrame(jRaf); jPointer = null;
+    const total = jScore + jBonus, record = total > (hoy.salto || 0);
+    if (record) { hoy.salto = total; guardar(); paintBestJ(); rain(50); }
+    $('j-text').textContent = record ? `¡Nuevo récord de hoy! Llegaste a ${total} 🏆` : total < 15 ? 'Uy, se cayó el dientito 🙈 ¿Otra vez?' : `Llegaste a ${total}. ¡Muy bien, amoricto!`;
+    $('j-start').textContent = 'Jugar otra vez'; $('j-exit').hidden = false; jCenter.hidden = false;
+  }
+  $('j-start').addEventListener('click', jStart);
+  $('j-exit').addEventListener('click', () => { cerrarFull(jumpBox); $('j-exit').hidden = true; requestAnimationFrame(() => { if (!jOn) { jReset(); jDraw(); } }); });
+  $('j-x').addEventListener('click', () => { if (jOn) jEnd(); cerrarFull(jumpBox); $('j-exit').hidden = true; requestAnimationFrame(() => { jReset(); jDraw(); }); });
+  const jPos = e => e.clientX - jc.getBoundingClientRect().left;
+  jc.addEventListener('pointerdown', e => { e.preventDefault(); jPointer = jPos(e); try { jc.setPointerCapture(e.pointerId); } catch {} });
+  jc.addEventListener('pointermove', e => { if (jPointer != null) jPointer = jPos(e); });
+  ['pointerup', 'pointercancel'].forEach(v => jc.addEventListener(v, () => { jPointer = null; }));
+  addEventListener('keydown', e => { if (!jOn) return; if (e.key === 'ArrowLeft') { jKeys.l = true; e.preventDefault(); } if (e.key === 'ArrowRight') { jKeys.r = true; e.preventDefault(); } });
+  addEventListener('keyup', e => { if (e.key === 'ArrowLeft') jKeys.l = false; if (e.key === 'ArrowRight') jKeys.r = false; });
+  addEventListener('resize', () => { if (jOn) jSize(); else if (jp) { jReset(); jDraw(); } });
+  jReset(); jDraw();
 
   /* ================= Vales ================= */
   const vales = [
@@ -948,7 +1144,7 @@
   /* ================= Informe ================= */
   const fmtFecha = (f, opts = { weekday: 'long', day: 'numeric', month: 'long' }) => new Date(f + 'T12:00:00').toLocaleDateString('es', opts);
   const diffDias = (a, b) => Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / 864e5);
-  const tieneDatos = d => d && (d.dolor != null || d.animo != null || nChecks(d) || d.agua || d.abrazos || d.juego || d.razones || d.nota);
+  const tieneDatos = d => d && (d.dolor != null || d.animo != null || nChecks(d) || d.agua || d.abrazos || d.juego || d.salto || d.razones || d.nota);
   function renderInforme() {
     const fechas = Object.keys(dias).filter(f => f === HOY || tieneDatos(dias[f])).sort();
     const inicio = INICIO;
@@ -967,6 +1163,7 @@
       ['Agua', `${hoy.agua}/8`, 'vasitos'],
       ['Abrazos', hoy.abrazos, `${totalAbrazos()} en total`],
       ['Medusas', hoy.juego || 0, 'récord de hoy'],
+      ['Saltos', hoy.salto || 0, 'récord de altura'],
       ['Razones', hoy.razones, 'papelitos leídos'],
       ['Vales', canjeHoy.length, canjeHoy.length ? canjeHoy.join(', ') : 'canjeados hoy']
     ];
@@ -996,6 +1193,7 @@
       if (d.animo != null) bits.push(`${MOODS[d.animo][0]} ${MOODS[d.animo][1].toLowerCase()}`);
       bits.push(`misiones ${nChecks(d)}/${TAREAS.length}`, `agua ${d.agua || 0}/8`, `${d.abrazos || 0} abrazos`);
       if (d.juego) bits.push(`${d.juego} medusas`);
+      if (d.salto) bits.push(`altura ${d.salto} saltando`);
       const msg = mensajes[f] && mensajes[f].texto ? `<i>Daniel: ${esc(mensajes[f].texto)}</i>` : '';
       return `<li><b>Día ${diffDias(inicio, f) + 1} · ${esc(fmtFecha(f, { weekday: 'short', day: 'numeric', month: 'short' }))}</b><div class="det">${esc(bits.join(' · '))}${d.nota ? `<i>“${esc(d.nota)}”</i>` : ''}${msg}</div></li>`;
     }).join('');
@@ -1007,7 +1205,7 @@
     const hechas = TAREAS.filter((_, i) => hoy.checks[i]);
     l.push(`Misiones: ${hechas.length}/${TAREAS.length}`);
     hechas.forEach(t => l.push(`  ✅ ${t}`));
-    l.push(`Agua: ${hoy.agua}/8 vasitos`, `Abrazos: ${hoy.abrazos}`, `Medusas atrapadas (récord): ${hoy.juego || 0}`);
+    l.push(`Agua: ${hoy.agua}/8 vasitos`, `Abrazos: ${hoy.abrazos}`, `Medusas atrapadas (récord): ${hoy.juego || 0}`, `Salta, dientito (récord): ${hoy.salto || 0}`);
     if (canjeHoy.length) l.push(`Vales canjeados: ${canjeHoy.join(', ')}`);
     if (hoy.nota) l.push('', `Mi nota: "${hoy.nota}"`);
     const cmp = $('r-compare').textContent; if (cmp && hoy.dolor != null) l.push('', cmp);
@@ -1030,7 +1228,7 @@
   /* ================= Pintar todo desde "hoy" ================= */
   function hydrate() {
     if (hoy.dolor != null) pain.value = hoy.dolor;
-    paintPain(); paintMood(); paintChecks(false); paintAgua(); paintHug(); paintBest(); paintVales();
+    paintPain(); paintMood(); paintChecks(false); paintAgua(); paintHug(); paintBest(); paintBestJ(); paintVales();
     if (document.activeElement !== nota) nota.value = hoy.nota || '';
     renderInforme();
   }
