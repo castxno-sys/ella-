@@ -37,6 +37,15 @@
     font: 17px/1.6 var(--body);
     overflow-x: hidden;
   }
+  /* Medusas que flotan de fondo */
+  .jellies { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .jelly { position: absolute; bottom: -140px; animation: swim linear infinite; }
+  @keyframes swim { to { transform: translateY(calc(-100vh - 280px)); } }
+  .jelly svg { display: block; animation: pulse 2.6s ease-in-out infinite; transform-origin: 50% 25%; }
+  @keyframes pulse { 50% { transform: scale(1.1, .88); } }
+  .tent { transform-box: fill-box; transform-origin: 50% 0; animation: sway 2.6s ease-in-out infinite; }
+  @keyframes sway { 50% { transform: skewX(10deg); } }
+  main { position: relative; z-index: 1; }
   #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
   main {
     max-width: 760px; margin: 0 auto;
@@ -183,6 +192,7 @@
   }
 </style>
 
+<div class="jellies" id="jellies" aria-hidden="true"></div>
 <canvas id="fx" aria-hidden="true"></canvas>
 
 <main>
@@ -334,6 +344,11 @@
     cx.bezierCurveTo(x, y + s * .8, x + s * .5, y + s * .6, x + s * .5, y + s * .3);
     cx.bezierCurveTo(x + s * .5, y, x, y, x, y + s * .3); cx.fill();
   }
+  function jellyP(x, y, s) {
+    cx.beginPath(); cx.arc(x, y, s * .55, Math.PI, 0); cx.closePath(); cx.fill();
+    cx.strokeStyle = cx.fillStyle; cx.lineWidth = 1.5; cx.lineCap = 'round';
+    for (let k = -1; k <= 1; k++) { cx.beginPath(); cx.moveTo(x + k * s * .3, y); cx.quadraticCurveTo(x + k * s * .3 + s * .2, y + s * .5, x + k * s * .3, y + s); cx.stroke(); }
+  }
   function star(x, y, s) {
     cx.beginPath();
     for (let i = 0; i < 8; i++) { const r = i % 2 ? s * .35 : s; const a = i * Math.PI / 4; cx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); }
@@ -344,7 +359,7 @@
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2, v = (Math.random() * 4 + 1) * power;
       parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 2 * power, s: 8 + Math.random() * 14,
-        c: COLORS[Math.random() * COLORS.length | 0], life: 1, kind: Math.random() < .7 ? 'h' : 's', r: Math.random() * 6 });
+        c: COLORS[Math.random() * COLORS.length | 0], life: 1, kind: (q => q < .6 ? 'h' : q < .82 ? 's' : 'j')(Math.random()), r: Math.random() * 6 });
     }
     if (!running) { running = true; requestAnimationFrame(tick); }
   }
@@ -357,7 +372,7 @@
       p.vy += .12; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.life -= .012; p.r += .05;
       if (p.life <= 0 || p.y > H + 40) { parts.splice(i, 1); continue; }
       cx.globalAlpha = Math.max(p.life, 0); cx.fillStyle = p.c;
-      if (p.kind === 'h') heart(p.x, p.y, p.s); else star(p.x, p.y, p.s * .5);
+      if (p.kind === 'h') heart(p.x, p.y, p.s); else if (p.kind === 'j') jellyP(p.x, p.y, p.s); else star(p.x, p.y, p.s * .5);
     }
     cx.globalAlpha = 1;
     if (parts.length) requestAnimationFrame(tick); else running = false;
@@ -371,7 +386,7 @@
 
   /* ===== Dientito que habla ===== */
   const frases = [
-    '¡Ashley, eres mi persona favorita! 💖', 'Ash, eres la más bonita 🌸', 'Daniel te manda un besito 💋', 'Daniel dice que te extraña', 'Mi amur, ya falta poquito', 'Amoricto, eres la más fuerte 💪', 'Mi niña linda, todo va a estar bien', 'Mi amur, tu sonrisa es mi favorita', 'Tu sonrisa va a quedar divina ✨', 'Respira, ya pasó lo más difícil',
+    '¡Ashley, eres mi persona favorita! 💖', 'Ash, eres la más bonita 🌸', 'Daniel te manda un besito 💋', 'Daniel dice que te extraña', 'Mi amur, ya falta poquito', 'Amoricto, eres la más fuerte 💪', 'Mi niña linda, todo va a estar bien', 'Mi amur, tu sonrisa es mi favorita', 'Brillas más que una medusa en el mar', 'Mi medusita bonita 💙', 'Tu sonrisa va a quedar divina ✨', 'Respira, ya pasó lo más difícil',
     'Helado autorizado por el dientito 🍦', 'Hoy toca dejarse consentir', 'Hablas raro y me encantas igual',
     'Cada día duele un poquito menos', 'Valiente nivel: máximo 🦷', 'Un besito en la frente (ahí no duele)',
     'Te amo de aquí a la luna', 'Descansa, yo cuido todo', 'La encía más bonita del mundo'
@@ -452,14 +467,14 @@
   const vales = [
     ['🍦', 'Helado a domicilio', 'Del sabor que quieras, frío y suavecito, como manda la doctora.'],
     ['🥤', 'Batido o smoothie', 'Te lo preparo yo, bien frío. Con cuchara si hace falta.'],
-    ['🎬', 'Maratón de series', 'Tú eliges todo. Yo no me quejo ni una vez. Promesa.'],
-    ['🦶', 'Masajito de pies', 'Veinte minutos completos, sin trampa.'],
+    ['🎬', 'Noche de películas', 'Tú eliges todas las películas. Yo no me quejo ni una vez. Promesa.'],
     ['😴', 'Siesta abrazados', 'Mantita, silencio y tú encima de mí.'],
-    ['🍲', 'Chef personal', 'Puré, sopita tibia o lo blandito que se te antoje.'],
     ['💐', 'Flores sorpresa', 'Llegan cuando menos te lo esperes.'],
+    ['🌊', 'Cita al acuario', 'Vamos a ver medusas brillando en la oscuridad, de la mano.'],
+    ['🧸', 'Peluche de medusa', 'Una medusita suave para que te acompañe mientras sanas.'],
     ['🗺️', 'Cita cuando sanes', 'A comer eso crujiente que extrañas. Yo invito.']
   ];
-  const used = store.get('vales', {});
+  const used = store.get('vales2', {});
   const wrap = document.getElementById('coupons');
   vales.forEach(([ico, t, d], i) => {
     const c = document.createElement('div'); c.className = 'coupon' + (used[i] ? ' used' : '');
@@ -469,7 +484,7 @@
     c.querySelector('.front').addEventListener('click', () => { c.classList.add('flipped'); spawn(...center(c), 10, .8); });
     c.querySelector('.back').addEventListener('click', e => { if (!e.target.closest('.redeem')) c.classList.remove('flipped'); });
     c.querySelector('.redeem').addEventListener('click', () => {
-      c.classList.add('used'); used[i] = true; store.set('vales', used); spawn(...center(c), 35, 1.3);
+      c.classList.add('used'); used[i] = true; store.set('vales2', used); spawn(...center(c), 35, 1.3);
     });
     wrap.appendChild(c);
   });
@@ -551,6 +566,25 @@ Daniel`;
       step();
     }, 500);
   });
+
+  // Medusas de fondo
+  const JC = [['#ffb3c8', '#f78fb0'], ['#b9ecdc', '#7ad9bd'], ['#d9c8ff', '#b49cf2'], ['#bfe3ff', '#86c5f2']];
+  const jbox = document.getElementById('jellies');
+  for (let i = 0; i < 7; i++) {
+    const [f, s] = JC[i % JC.length], size = 38 + Math.random() * 44, d = 18 + Math.random() * 16;
+    const j = document.createElement('div'); j.className = 'jelly';
+    j.style.left = (i / 7 * 100 + Math.random() * 8) + '%';
+    j.style.width = size + 'px'; j.style.opacity = .55 + Math.random() * .3;
+    if (reduce) { j.style.bottom = 'auto'; j.style.top = (10 + Math.random() * 75) + '%'; }
+    else { j.style.animationDuration = d + 's'; j.style.animationDelay = (-Math.random() * d) + 's'; }
+    j.innerHTML = `<svg viewBox="0 0 60 100"><path d="M4 32 C4 6 56 6 56 32 Q51 37 46 32 Q41 37 35 32 Q30 37 25 32 Q19 37 14 32 Q9 37 4 32Z" fill="${f}" stroke="${s}" stroke-width="2"/>
+      <ellipse cx="22" cy="20" rx="5" ry="3" fill="#fff" opacity=".7"/>
+      <circle cx="24" cy="26" r="2" fill="#4a1630"/><circle cx="36" cy="26" r="2" fill="#4a1630"/>
+      <g class="tent" fill="none" stroke="${s}" stroke-width="2.5" stroke-linecap="round">
+        <path d="M14 36 q-5 12 0 24 q5 12 0 24"/><path d="M25 36 q5 14 0 28 q-5 12 0 26"/>
+        <path d="M35 36 q-5 14 0 28 q5 12 0 22"/><path d="M46 36 q5 12 0 24 q-5 10 0 20"/></g></svg>`;
+    jbox.appendChild(j);
+  }
 
   // Apodos que van cambiando
   const apodos = ['mi amur', 'amoricto', 'mi niña', 'Ash'], apEl = document.getElementById('apodo');
