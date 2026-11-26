@@ -321,7 +321,6 @@
     <p class="aka">también conocida como <span id="apodo">mi amur</span></p>
     <p class="lead">Te hicieron un recorte de encías y aquí estás, resistiendo como una campeona. Esta página es toda tuya, Ashley: tócalo todo, cada cosa esconde un mimo. Y cada día se guarda en tu diario de recuperación.</p>
     <p class="hint">Arrastra las medusas con el dedo y lánzalas ✨ Inclina o sacude el teléfono y verás cómo nadan 📱</p>
-    <button class="cta mint" id="motion-btn" style="justify-self:center" hidden>Activar movimiento del teléfono</button>
   </section>
 
   <!-- INFORME -->
@@ -634,17 +633,19 @@
     }
   }
   function activarMovimiento() { addEventListener('deviceorientation', onTilt); addEventListener('devicemotion', onShake); }
-  const motionBtn = $('motion-btn');
   if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-    motionBtn.hidden = false;
-    motionBtn.addEventListener('click', async () => {
+    // iPhone: el aviso de permiso sale solo con el primer toque en cualquier parte de la página
+    let pedido = false;
+    const pedir = async () => {
+      if (pedido) return; pedido = true;
+      document.removeEventListener('touchend', pedir, true); document.removeEventListener('click', pedir, true);
       try {
         const r = await DeviceOrientationEvent.requestPermission();
         if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') { try { await DeviceMotionEvent.requestPermission(); } catch {} }
-        if (r === 'granted') { activarMovimiento(); motionBtn.textContent = '¡Listo! Inclina el teléfono 📱'; motionBtn.disabled = true; }
-        else motionBtn.textContent = 'El teléfono no dio permiso';
-      } catch { motionBtn.textContent = 'Aquí no se puede activar el movimiento'; motionBtn.disabled = true; }
-    });
+        if (r === 'granted') activarMovimiento();
+      } catch {}
+    };
+    document.addEventListener('touchend', pedir, true); document.addEventListener('click', pedir, true);
   } else activarMovimiento();
   function swimLoop(t) {
     const dS = scrollY - lastSY; lastSY = scrollY;
