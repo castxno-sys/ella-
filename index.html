@@ -488,6 +488,7 @@
 
   /* ================= Diario (guardado diario) ================= */
   const HOY = new Date().toLocaleDateString('en-CA');
+  const INICIO = '2026-11-24'; // día 1 de recuperación (día de la cirugía)
   const vacio = f => ({ fecha: f, dolor: null, animo: null, checks: {}, agua: 0, abrazos: 0, juego: 0, razones: 0, nota: '' });
   const TAREAS = [
     'Comí algo blandito y fresquito', 'Tomé mis medicinas a la hora', 'Me puse hielito por fuera de la cara',
@@ -871,7 +872,7 @@
   const tieneDatos = d => d && (d.dolor != null || d.animo != null || nChecks(d) || d.agua || d.abrazos || d.juego || d.razones || d.nota);
   function renderInforme() {
     const fechas = Object.keys(dias).filter(f => f === HOY || tieneDatos(dias[f])).sort();
-    const inicio = fechas[0] || HOY;
+    const inicio = INICIO;
     $('r-day').textContent = `Día ${diffDias(inicio, HOY) + 1} de recuperación`;
     $('r-date').textContent = (t => t[0].toUpperCase() + t.slice(1))(fmtFecha(HOY));
 
