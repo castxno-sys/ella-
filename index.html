@@ -126,7 +126,8 @@
 
   /* ---------- Vales ---------- */
   .coupons { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
-  .coupon { perspective: 900px; height: 190px; }
+  .coupon { perspective: 900px; height: 220px; }
+  @media (max-width: 480px) { .face.back strong { font-size: 1rem; } .face.back p { font-size: .8rem; line-height: 1.35; } .face { gap: 6px; } }
   .coupon .inner { position: relative; width: 100%; height: 100%; transition: transform .6s cubic-bezier(.3,1.4,.5,1); transform-style: preserve-3d; }
   .coupon.flipped .inner { transform: rotateY(180deg); }
   .face {
