@@ -432,7 +432,7 @@
     <p class="lead">Tienes 25 segundos para tocar todas las medusas que puedas antes de que se escapen. Las doradas valen 3.</p>
     <div class="game" id="game">
       <div class="hud"><span>⏱ <b id="g-time">25</b>s</span><span>Atrapadas: <b id="g-score">0</b></span><span>Récord de hoy: <b id="g-best">0</b></span></div>
-      <div class="game-center" id="g-center"><p id="g-text">¿Lista, mi medusita?</p><button class="cta mint" id="g-start">Empezar</button></div>
+      <div class="game-center" id="g-center"><p id="g-text">¿Lista, amoricto?</p><button class="cta mint" id="g-start">Empezar</button></div>
     </div>
   </section>
 
@@ -621,7 +621,7 @@
   const frases = [
     '¡Ashley, eres mi persona favorita! 💖', 'Ash, eres la más bonita 🌸', 'Daniel te manda un besito 💋', 'Daniel dice que te extraña',
     'Mi amur, ya falta poquito', 'Amoricto, eres la más fuerte 💪', 'Mi niña linda, todo va a estar bien', 'Mi amur, tu sonrisa es mi favorita',
-    'Brillas más que una medusa en el mar', 'Mi medusita bonita 💙', 'Tu sonrisa va a quedar divina ✨', 'Respira, ya pasó lo más difícil',
+    'Brillas más que una medusa en el mar', 'Tu sonrisa va a quedar divina ✨', 'Respira, ya pasó lo más difícil',
     'Helado autorizado por el dientito 🍦', 'Hoy toca dejarse consentir', 'Hablas raro y me encantas igual',
     'Cada día duele un poquito menos', 'Valiente nivel: máximo 🦷', 'Un besito en la frente (ahí no duele)',
     'Te amo de aquí a la luna', 'Descansa, Daniel cuida todo', 'La encía más bonita del mundo', '¿Ya tomaste agüita, amoricto?',
@@ -631,7 +631,7 @@
     'Una medusita me contó que te aman mucho 💙', 'Mi niña valiente, ya casi', 'Hoy toca siesta, película y mimos',
     'Te ves preciosa hasta con la carita hinchada', 'Amoricto, sonríe despacito que me derrites', 'El dientito votó: eres la paciente del año 🏆',
     'Mi amur, ya pasaste lo peor', 'Eres suavecita como una medusa y fuerte como una roca',
-    'Abrázate fuerte, ese abrazo te lo manda Daniel 🤗', 'Mi medusita, tu sonrisa va a volver más linda', 'Paciencia, mi niña: lo bonito tarda un poquito',
+    'Abrázate fuerte, ese abrazo te lo manda Daniel 🤗', 'Mi amur, tu sonrisa va a volver más linda', 'Paciencia, mi niña: lo bonito tarda un poquito',
     'Cuando sanes, te llevo a comer lo que quieras', 'Ash, eres mi lugar seguro'
   ];
   const tooth = $('tooth'), bubble = $('bubble'), mouth = $('mouth');
@@ -644,7 +644,7 @@
     setTimeout(() => { mouth.setAttribute('d', 'M98 104 Q110 118 122 104'); mouth.setAttribute('fill', 'none'); }, 700);
     spawn(...center(tooth), 24, 1.2);
   });
-  const apodos = ['mi amur', 'amoricto', 'mi niña', 'Ash', 'mi medusita'], apEl = $('apodo');
+  const apodos = ['mi amur', 'amoricto', 'mi niña', 'Ash'], apEl = $('apodo');
   let ai = 0;
   if (!reduce) setInterval(() => {
     ai = (ai + 1) % apodos.length;
@@ -729,7 +729,7 @@
   }
   function paintAgua() {
     [...gl.children].forEach((b, i) => b.classList.toggle('full', i < hoy.agua));
-    $('agua-msg').textContent = hoy.agua >= 8 ? '¡Meta cumplida! Hidratadísima, mi medusita 🌊' : hoy.agua ? `${hoy.agua} de 8 vasitos. ¡Sigue así!` : 'Todavía ningún vaso hoy.';
+    $('agua-msg').textContent = hoy.agua >= 8 ? '¡Meta cumplida! Hidratadísima, mi niña 🌊' : hoy.agua ? `${hoy.agua} de 8 vasitos. ¡Sigue así!` : 'Todavía ningún vaso hoy.';
   }
 
   /* ================= Abrazo ================= */
@@ -834,7 +834,7 @@
     setTimeout(() => game.querySelectorAll('.gj').forEach(n => n.remove()), 400);
     const record = gScore > (hoy.juego || 0);
     if (record) { hoy.juego = gScore; guardar(); paintBest(); rain(50); }
-    $('g-text').textContent = gScore === 0 ? 'Se escaparon todas 🙈 ¿Otra vez?' : record ? `¡Nuevo récord de hoy! Atrapaste ${gScore} 🏆` : `Atrapaste ${gScore}. ¡Bien, mi medusita!`;
+    $('g-text').textContent = gScore === 0 ? 'Se escaparon todas 🙈 ¿Otra vez?' : record ? `¡Nuevo récord de hoy! Atrapaste ${gScore} 🏆` : `Atrapaste ${gScore}. ¡Bien, mi amur!`;
     $('g-start').textContent = 'Jugar otra vez';
     gCenter.hidden = false;
   }
