@@ -42,7 +42,8 @@
   }
   /* Medusas que nadan por toda la página */
   .jellies { position: fixed; inset: 0; pointer-events: none; z-index: 40; overflow: hidden; }
-  .jelly { position: absolute; left: 0; top: 0; will-change: transform; }
+  .jelly { position: absolute; left: 0; top: 0; will-change: transform; pointer-events: auto; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+  .jelly.grab { cursor: grabbing; }
   .jelly svg, .gj svg { display: block; animation: pulse 2.6s ease-in-out infinite; transform-origin: 50% 25%; }
   @keyframes pulse { 50% { transform: scale(1.1, .88); } }
   .tent { transform-box: fill-box; transform-origin: 50% 0; animation: sway 2.6s ease-in-out infinite; }
@@ -319,7 +320,8 @@
     <h1>Ashley, eres la más valiente</h1>
     <p class="aka">también conocida como <span id="apodo">mi amur</span></p>
     <p class="lead">Te hicieron un recorte de encías y aquí estás, resistiendo como una campeona. Esta página es toda tuya, Ashley: tócalo todo, cada cosa esconde un mimo. Y cada día se guarda en tu diario de recuperación.</p>
-    <p class="hint">Pasa el dedo o el mouse por la pantalla ✨ y espanta a las medusas</p>
+    <p class="hint">Arrastra las medusas con el dedo y lánzalas ✨ Inclina o sacude el teléfono y verás cómo nadan 📱</p>
+    <button class="cta mint" id="motion-btn" style="justify-self:center" hidden>Activar movimiento del teléfono</button>
   </section>
 
   <!-- INFORME -->
@@ -592,14 +594,65 @@
     jellies.push({ el: j, x: Math.random() * (innerWidth - size), y: Math.random() * innerHeight, sp: .25 + Math.random() * .45, ph: Math.random() * 6.28, amp: .6 + Math.random(), size, pushX: 0, pushY: 0 });
     jbox.appendChild(j);
   }
-  let lastSY = scrollY, mx = -999, my = -999;
-  addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
-  addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') mx = my = -999; });
+  let lastSY = scrollY, mx = -999, my = -999, tiltX = 0, tiltY = 0;
+  addEventListener('pointermove', e => { if (e.pointerType !== 'mouse' && !jellies.some(q => q.drag)) { mx = e.clientX; my = e.clientY; } }, { passive: true });
+  addEventListener('pointerup', () => { mx = my = -999; });
+  // Arrastrar y lanzar medusas con el dedo
+  jellies.forEach(q => {
+    const el = q.el;
+    el.addEventListener('pointerdown', e => {
+      e.preventDefault(); q.drag = true; q.ox = e.clientX - q.x; q.oy = e.clientY - q.y; q.dvx = 0; q.dvy = 0;
+      el.classList.add('grab'); try { el.setPointerCapture(e.pointerId); } catch {}
+    });
+    el.addEventListener('pointermove', e => {
+      if (!q.drag) return;
+      const nx = e.clientX - q.ox, ny = e.clientY - q.oy;
+      q.dvx = nx - q.x; q.dvy = ny - q.y; q.x = nx; q.y = ny;
+    });
+    const soltar = () => {
+      if (!q.drag) return; q.drag = false; el.classList.remove('grab');
+      q.pushX = Math.max(-30, Math.min(30, q.dvx)); q.pushY = Math.max(-30, Math.min(30, q.dvy));
+      spawn(q.x + q.size / 2, q.y + q.size / 3, 6, .6);
+    };
+    el.addEventListener('pointerup', soltar); el.addEventListener('pointercancel', soltar);
+  });
+  // Movimiento del teléfono: inclinar las empuja, sacudir las revuelve
+  let baseBeta = null, lastShake = 0;
+  function onTilt(e) {
+    if (e.gamma == null || e.beta == null) return;
+    if (baseBeta == null) baseBeta = e.beta;
+    tiltX = Math.max(-1, Math.min(1, e.gamma / 35));
+    tiltY = Math.max(-1, Math.min(1, (e.beta - baseBeta) / 35));
+  }
+  function onShake(e) {
+    const a = e.accelerationIncludingGravity || e.acceleration; if (!a) return;
+    const m = Math.hypot(a.x || 0, a.y || 0, a.z || 0);
+    if (m > 28 && performance.now() - lastShake > 900) {
+      lastShake = performance.now();
+      jellies.forEach(q => { q.pushX += (Math.random() - .5) * 40; q.pushY += (Math.random() - .5) * 40; });
+      rain(25);
+    }
+  }
+  function activarMovimiento() { addEventListener('deviceorientation', onTilt); addEventListener('devicemotion', onShake); }
+  const motionBtn = $('motion-btn');
+  if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+    motionBtn.hidden = false;
+    motionBtn.addEventListener('click', async () => {
+      try {
+        const r = await DeviceOrientationEvent.requestPermission();
+        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') { try { await DeviceMotionEvent.requestPermission(); } catch {} }
+        if (r === 'granted') { activarMovimiento(); motionBtn.textContent = '¡Listo! Inclina el teléfono 📱'; motionBtn.disabled = true; }
+        else motionBtn.textContent = 'El teléfono no dio permiso';
+      } catch { motionBtn.textContent = 'Aquí no se puede activar el movimiento'; motionBtn.disabled = true; }
+    });
+  } else activarMovimiento();
   function swimLoop(t) {
     const dS = scrollY - lastSY; lastSY = scrollY;
     const W2 = innerWidth, H2 = innerHeight;
     for (const q of jellies) {
       const tt = t / 1000 + q.ph;
+      if (q.drag) { q.el.style.transform = `translate(${q.x}px, ${q.y}px) rotate(${Math.max(-30, Math.min(30, q.dvx * 2))}deg) scale(1.15)`; continue; }
+      q.pushX += tiltX * .22; q.pushY += tiltY * .22;
       q.y -= q.sp + Math.max(Math.sin(tt * 2.4), 0) * q.sp * 1.6;
       q.y -= dS * (.25 + q.sp * .6);
       q.x += Math.sin(tt * .5) * q.amp * .6;
