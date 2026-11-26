@@ -228,8 +228,8 @@
   .hud span { background: rgba(255,255,255,.75); border-radius: 999px; padding: 4px 12px; }
   .game-center { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; text-align: center; padding: 60px 16px 16px; z-index: 3; }
   .game-center p { font: 600 1.2rem var(--display); color: #1f5671; max-width: 22rem; }
-  .gj { position: absolute; left: 0; bottom: -110px; border: 0; background: none; padding: 6px; touch-action: manipulation; animation: rise linear forwards; z-index: 1; }
-  @keyframes rise { to { transform: translateY(-520px); } }
+  .gj { position: absolute; left: 0; bottom: -110px; border: 0; background: none; padding: 6px; touch-action: manipulation; z-index: 1; will-change: transform; }
+  body.jugando .jellies .jelly { pointer-events: none; }
 
   /* ---------- Vales ---------- */
   .coupons { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
@@ -286,6 +286,8 @@
     *, *::before, *::after { animation: none !important; transition: none !important; }
     .jellies .jelly svg { animation: pulse 2.6s ease-in-out infinite !important; }
     .jellies .tent { animation: sway 2.6s ease-in-out infinite !important; }
+    .game .gj svg { animation: pulse 2.6s ease-in-out infinite !important; }
+    .game .tent { animation: sway 2.6s ease-in-out infinite !important; }
   }
 </style>
 
@@ -859,7 +861,18 @@
 
   /* ================= Juego ================= */
   const game = $('game'), gCenter = $('g-center');
-  let gScore = 0, gTime = 25, gOn = false, gSpawn = null, gClock = null;
+  let gScore = 0, gTime = 25, gOn = false, gSpawn = null, gClock = null, gRunning = false, gLast = 0;
+  const gList = [];
+  function gLoop(t) {
+    const dt = gLast ? Math.min(t - gLast, 50) : 16; gLast = t;
+    for (let i = gList.length - 1; i >= 0; i--) {
+      const q = gList[i];
+      if (!q.el.isConnected) { gList.splice(i, 1); continue; }
+      q.y += q.v * dt; q.el.style.transform = `translateY(${-q.y}px)`;
+      if (q.y > game.clientHeight + 140) { q.el.remove(); gList.splice(i, 1); }
+    }
+    if (gOn || gList.length) requestAnimationFrame(gLoop); else { gRunning = false; gLast = 0; }
+  }
   function paintBest() { $('g-best').textContent = hoy.juego || 0; }
   function gjelly() {
     const gold = Math.random() < .12;
@@ -868,7 +881,8 @@
     const b = document.createElement('button'); b.className = 'gj'; b.setAttribute('aria-label', gold ? 'Medusa dorada' : 'Medusa');
     b.style.width = size + 12 + 'px';
     b.style.left = Math.random() * Math.max(game.clientWidth - size - 12, 0) + 'px';
-    b.style.animationDuration = Math.max(dur - (25 - gTime) * .06, 2) + 's';
+    const d = Math.max(dur - (25 - gTime) * .06, 2);
+    gList.push({ el: b, y: 0, v: (game.clientHeight + 140) / (d * 1000) });
     b.innerHTML = jellySVG(f, s);
     b.addEventListener('pointerdown', e => {
       e.preventDefault(); if (!gOn) return;
@@ -876,17 +890,18 @@
       const r = b.getBoundingClientRect(); spawn(r.left + r.width / 2, r.top + r.height / 3, gold ? 20 : 8, gold ? 1.1 : .7);
       b.remove();
     });
-    b.addEventListener('animationend', () => b.remove());
     game.appendChild(b);
   }
   function gStart() {
     gScore = 0; gTime = 25; gOn = true; $('g-score').textContent = 0; $('g-time').textContent = 25;
     gCenter.hidden = true; game.querySelectorAll('.gj').forEach(n => n.remove());
+    document.body.classList.add('jugando');
     gSpawn = setInterval(gjelly, 520); gjelly();
+    if (!gRunning) { gRunning = true; gLast = 0; requestAnimationFrame(gLoop); }
     gClock = setInterval(() => { gTime--; $('g-time').textContent = gTime; if (gTime <= 0) gEnd(); }, 1000);
   }
   function gEnd() {
-    gOn = false; clearInterval(gSpawn); clearInterval(gClock);
+    gOn = false; clearInterval(gSpawn); clearInterval(gClock); document.body.classList.remove('jugando');
     setTimeout(() => game.querySelectorAll('.gj').forEach(n => n.remove()), 400);
     const record = gScore > (hoy.juego || 0);
     if (record) { hoy.juego = gScore; guardar(); paintBest(); rain(50); }
