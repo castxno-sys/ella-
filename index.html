@@ -72,6 +72,8 @@
     font: 600 1.1rem var(--display); box-shadow: 0 5px 0 #a8204f; justify-self: start;
   }
   .cta:active { transform: translateY(3px); box-shadow: 0 2px 0 #a8204f; }
+  a.cta { text-decoration: none; display: inline-block; text-align: center; }
+  .cta.wa { background: #25a35a; box-shadow: 0 5px 0 #17733e; }
   .cta.mint { background: var(--mint); color: #0f3b2f; box-shadow: 0 5px 0 #4fb497; }
 
   /* ---------- Hero ---------- */
@@ -334,6 +336,7 @@
     <div class="tiles" id="r-tiles"></div>
     <p class="compare" id="r-compare"></p>
     <div class="nota-view" id="r-nota" hidden><span class="eyebrow">Tu nota de hoy</span><p id="r-nota-text"></p></div>
+    <a class="cta wa" id="wa" href="https://wa.me/573125101430" target="_blank" rel="noopener">Enviarle mi informe a Daniel 💌</a>
     <p class="sync" id="sync">Se guarda en este teléfono.</p>
     <div id="r-hist-wrap" hidden>
       <h3>Cómo vas día a día</h3>
@@ -971,6 +974,7 @@
     const conDolor = fechas.filter(f => dias[f].dolor != null).slice(-14);
     $('r-hist-wrap').hidden = !pasados.length && conDolor.length < 2;
     $('r-chart').innerHTML = conDolor.length >= 2 ? chart(conDolor) : '';
+    $('wa').href = 'https://wa.me/573125101430?text=' + encodeURIComponent(textoInforme(canjeHoy));
     $('r-hist').innerHTML = pasados.map(f => {
       const d = dias[f], bits = [];
       if (d.dolor != null) bits.push(`molestia ${d.dolor}/10`);
@@ -980,6 +984,20 @@
       const msg = mensajes[f] && mensajes[f].texto ? `<i>Daniel: ${esc(mensajes[f].texto)}</i>` : '';
       return `<li><b>Día ${diffDias(inicio, f) + 1} · ${esc(fmtFecha(f, { weekday: 'short', day: 'numeric', month: 'short' }))}</b><div class="det">${esc(bits.join(' · '))}${d.nota ? `<i>“${esc(d.nota)}”</i>` : ''}${msg}</div></li>`;
     }).join('');
+  }
+  function textoInforme(canjeHoy) {
+    const l = [`🦷 ${$('r-day').textContent} · ${$('r-date').textContent}`, ''];
+    l.push(`Molestia: ${hoy.dolor == null ? 'sin registrar' : hoy.dolor + '/10 (' + painShort(hoy.dolor) + ')'}`);
+    l.push(`Ánimo: ${hoy.animo == null ? 'sin registrar' : MOODS[hoy.animo][0] + ' ' + MOODS[hoy.animo][1]}`);
+    const hechas = TAREAS.filter((_, i) => hoy.checks[i]);
+    l.push(`Misiones: ${hechas.length}/${TAREAS.length}`);
+    hechas.forEach(t => l.push(`  ✅ ${t}`));
+    l.push(`Agua: ${hoy.agua}/8 vasitos`, `Abrazos: ${hoy.abrazos}`, `Medusas atrapadas (récord): ${hoy.juego || 0}`);
+    if (canjeHoy.length) l.push(`Vales canjeados: ${canjeHoy.join(', ')}`);
+    if (hoy.nota) l.push('', `Mi nota: "${hoy.nota}"`);
+    const cmp = $('r-compare').textContent; if (cmp && hoy.dolor != null) l.push('', cmp);
+    l.push('', 'Te quiero 💗 Ashley');
+    return l.join('\n');
   }
   function chart(fs) {
     const w = 640, h = 200, L = 34, R = 16, T = 22, B = 30, n = fs.length;
