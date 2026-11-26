@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;800&family=Caveat:wght@600&display=swap">
 <style>
-  /* Una sola estética: rosa encía + menta de pasta dental. Columna central, secciones como "estaciones de mimos". */
+  /* Una sola estética: rosa encía + menta de pasta dental + azul de mar para las medusas. Columna central de "estaciones de mimos". */
   :root {
     --bg: #fff0f4;
     --bg2: #ffe1ea;
@@ -18,6 +18,8 @@
     --gum: #f78fb0;
     --mint: #7ad9bd;
     --mint-dk: #23866b;
+    --sea: #dff3fb;
+    --sea2: #a9dcf1;
     --line: #f6c6d6;
     --display: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
     --body: "Nunito", system-ui, -apple-system, sans-serif;
@@ -25,6 +27,7 @@
     color-scheme: light;
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   body {
     margin: 0;
     background: var(--bg);
@@ -34,47 +37,54 @@
       radial-gradient(circle at 6% 70%, #d8f6ec 0 70px, transparent 71px),
       radial-gradient(circle at 96% 88%, #ffd6e3 0 110px, transparent 111px);
     color: var(--ink);
-    font: 17px/1.6 var(--body);
+    font: 19px/1.6 var(--body);
     overflow-x: hidden;
   }
-  /* Medusas que flotan de fondo */
+  /* Medusas que nadan por toda la página */
   .jellies { position: fixed; inset: 0; pointer-events: none; z-index: 40; overflow: hidden; }
   .jelly { position: absolute; left: 0; top: 0; will-change: transform; }
-  .jelly svg { display: block; animation: pulse 2.6s ease-in-out infinite; transform-origin: 50% 25%; }
+  .jelly svg, .gj svg { display: block; animation: pulse 2.6s ease-in-out infinite; transform-origin: 50% 25%; }
   @keyframes pulse { 50% { transform: scale(1.1, .88); } }
   .tent { transform-box: fill-box; transform-origin: 50% 0; animation: sway 2.6s ease-in-out infinite; }
   @keyframes sway { 50% { transform: skewX(10deg); } }
-  main { position: relative; z-index: 1; }
   #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
   main {
-    max-width: 760px; margin: 0 auto;
-    padding-block: 32px 64px;
+    position: relative; z-index: 1;
+    max-width: 900px; margin: 0 auto;
+    padding-block: 40px 80px;
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
-    display: grid; gap: 56px;
+    display: grid; gap: 64px;
   }
-  h1, h2 { font-family: var(--display); margin: 0; text-wrap: balance; line-height: 1.1; }
-  h1 { font-size: clamp(2.2rem, 7vw, 3.6rem); font-weight: 700; color: var(--berry); }
-  h2 { font-size: clamp(1.5rem, 4.5vw, 2rem); font-weight: 600; }
+  h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; line-height: 1.1; }
+  h1 { font-size: clamp(2.6rem, 8vw, 4.4rem); font-weight: 700; color: var(--berry); }
+  h2 { font-size: clamp(1.7rem, 5vw, 2.4rem); font-weight: 600; }
+  h3 { font-size: 1.2rem; font-weight: 600; }
   p { margin: 0; }
-  .eyebrow { font: 700 .78rem var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--mint-dk); }
-  section { display: grid; gap: 16px; }
-  .lead { color: var(--soft); max-width: 60ch; }
-  button { font: inherit; cursor: pointer; }
-  button:focus-visible, input:focus-visible, label:focus-within { outline: 3px solid var(--mint-dk); outline-offset: 3px; }
+  .eyebrow { font: 800 .82rem var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--mint-dk); }
+  section { display: grid; gap: 18px; }
+  .lead { color: var(--soft); max-width: 62ch; }
+  button { font: inherit; cursor: pointer; color: inherit; }
+  button:focus-visible, input:focus-visible, textarea:focus-visible, label:focus-within { outline: 3px solid var(--mint-dk); outline-offset: 3px; }
+  .cta {
+    border: 0; border-radius: 999px; padding: 14px 28px; background: var(--berry); color: #fff;
+    font: 600 1.1rem var(--display); box-shadow: 0 5px 0 #a8204f; justify-self: start;
+  }
+  .cta:active { transform: translateY(3px); box-shadow: 0 2px 0 #a8204f; }
+  .cta.mint { background: var(--mint); color: #0f3b2f; box-shadow: 0 5px 0 #4fb497; }
 
   /* ---------- Hero ---------- */
-  .hero { text-align: center; justify-items: center; gap: 12px; }
+  .hero { text-align: center; justify-items: center; gap: 14px; }
   .tooth-btn { background: none; border: 0; padding: 0; position: relative; border-radius: 40px; touch-action: manipulation; }
-  .tooth-btn svg { width: min(230px, 60vw); height: auto; display: block; animation: bob 3.2s ease-in-out infinite; }
+  .tooth-btn svg { width: min(300px, 70vw); height: auto; display: block; animation: bob 3.2s ease-in-out infinite; }
   .tooth-btn:active svg { transform: scale(.94); }
   @keyframes bob { 50% { transform: translateY(-8px) rotate(-2deg); } }
   .eye { transform-box: fill-box; transform-origin: center; animation: blink 4.5s infinite; }
   @keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
   .bubble {
     position: relative; background: var(--card); border: 2px solid var(--line);
-    border-radius: 20px; padding: 10px 18px; font: 600 1.05rem var(--display);
-    color: var(--berry); max-width: 26rem; min-height: 2.9em; display: grid; place-items: center;
+    border-radius: 22px; padding: 12px 22px; font: 600 1.2rem var(--display);
+    color: var(--berry); max-width: 30rem; min-height: 2.9em; display: grid; place-items: center;
     box-shadow: 0 6px 0 var(--line);
   }
   .bubble::before {
@@ -82,110 +92,192 @@
     background: var(--card); border-left: 2px solid var(--line); border-top: 2px solid var(--line);
     transform: translateX(-50%) rotate(45deg);
   }
+  .aka { font: 600 1.3rem var(--display); color: var(--berry); }
+  #apodo { display: inline-block; font: 600 2rem var(--hand); color: var(--ink); margin-left: 6px; }
   .pop { animation: pop .35s ease; }
   @keyframes pop { 40% { transform: scale(1.06); } }
-  .hint { font-size: .85rem; color: var(--soft); }
+  .hint { font-size: .9rem; color: var(--soft); }
 
-  /* ---------- Tarjetas base ---------- */
+  /* ---------- Paneles ---------- */
   .panel {
-    background: var(--card); border: 2px solid var(--line); border-radius: 26px;
-    padding: 24px clamp(18px, 4vw, 32px); display: grid; gap: 16px;
-    box-shadow: 0 8px 0 var(--line);
+    background: var(--card); border: 2px solid var(--line); border-radius: 30px;
+    padding: 28px clamp(18px, 4.5vw, 40px); display: grid; gap: 18px;
+    box-shadow: 0 9px 0 var(--line);
   }
 
-  /* ---------- Abrazo ---------- */
-  .hug { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
-  .hug-btn {
-    width: 132px; height: 132px; border-radius: 50%; border: 0; position: relative;
-    background: conic-gradient(var(--berry) calc(var(--p, 0) * 1%), var(--bg2) 0);
-    display: grid; place-items: center; touch-action: none; user-select: none; -webkit-user-select: none;
-  }
-  .hug-btn span {
-    width: 108px; height: 108px; border-radius: 50%; background: var(--card);
-    display: grid; place-items: center; font: 700 1rem/1.15 var(--display); color: var(--berry);
-    text-align: center; padding: 8px;
-  }
-  .hug-btn.full span { background: var(--berry); color: #fff; }
-  .hug p { min-width: 0; }
-  @media (max-width: 480px) { .hug { grid-template-columns: 1fr; justify-items: center; text-align: center; } }
+  /* ---------- Informe ---------- */
+  .report { border-color: var(--mint); box-shadow: 0 9px 0 #bfeedd; }
+  .report-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 16px; }
+  .daynum { font: 700 clamp(2rem, 6vw, 2.8rem)/1 var(--display); color: var(--mint-dk); }
+  .daydate { color: var(--soft); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 12px; }
+  .tile { background: var(--bg); border-radius: 18px; padding: 12px 14px; display: grid; gap: 2px; min-width: 0; }
+  .tile span { font-size: .8rem; color: var(--soft); font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+  .tile b { font: 600 1.6rem var(--display); font-variant-numeric: tabular-nums; }
+  .tile small { color: var(--soft); font-size: .82rem; overflow-wrap: anywhere; }
+  .compare { font-weight: 700; color: var(--mint-dk); }
+  .msg-daniel { background: #fff7d6; border: 2px dashed #f2d27a; border-radius: 18px; padding: 14px 18px; display: grid; gap: 4px; }
+  .msg-daniel b { font: 600 1rem var(--display); color: var(--berry); }
+  .msg-daniel p { font: 600 1.6rem/1.25 var(--hand); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .nota-view { background: var(--bg); border-radius: 18px; padding: 14px 18px; display: grid; gap: 4px; }
+  .nota-view p { font: 600 1.5rem/1.25 var(--hand); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .sync { font-size: .85rem; color: var(--soft); display: flex; align-items: center; gap: 8px; }
+  .sync::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--gum); flex: none; }
+  .sync.on::before { background: var(--mint-dk); box-shadow: 0 0 0 4px #d6f5ea; }
+  .chart-wrap { overflow-x: auto; }
+  .chart-wrap svg { width: 100%; min-width: 320px; height: auto; display: block; }
+  .chart-wrap .ax { font: 600 12px var(--body); fill: var(--soft); }
+  .history { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .history li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 4px 12px; padding: 10px 14px; border-radius: 14px; background: var(--bg); font-size: .92rem; }
+  .history li b { font-family: var(--display); font-weight: 600; }
+  .history li .det { color: var(--soft); min-width: 0; }
+  .history li .det i { font-style: normal; font-family: var(--hand); font-size: 1.25rem; color: var(--ink); display: block; overflow-wrap: anywhere; }
+  .owner { display: grid; gap: 10px; border-top: 2px dashed var(--line); padding-top: 16px; }
+  @media (max-width: 480px) { .history li { grid-template-columns: 1fr; } }
 
-  /* ---------- Frasco ---------- */
-  .jar-wrap { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
-  .jar-btn { background: none; border: 0; padding: 0; border-radius: 20px; }
-  .jar-btn svg { width: 150px; height: auto; display: block; transition: transform .2s; }
-  .jar-btn:hover svg { transform: rotate(-4deg); }
-  .jar-btn.shake svg { animation: shake .5s; }
-  @keyframes shake { 20% { transform: rotate(-10deg); } 40% { transform: rotate(9deg); } 60% { transform: rotate(-6deg); } 80% { transform: rotate(4deg); } }
-  .note {
-    background: #fffbe6; border: 2px dashed #f2d27a; border-radius: 14px; padding: 16px 18px;
-    font: 600 1.7rem/1.2 var(--hand); color: var(--ink); transform: rotate(-1.5deg); min-width: 0;
+  /* ---------- Ánimo ---------- */
+  .moods { display: flex; flex-wrap: wrap; gap: 12px; }
+  .mood {
+    border: 3px solid transparent; background: var(--bg); border-radius: 22px; padding: 12px 10px;
+    display: grid; justify-items: center; gap: 4px; flex: 1 1 96px; font-weight: 800; font-size: .85rem; color: var(--soft);
+    transition: transform .15s, border-color .15s, background .15s;
   }
-  .note small { display: block; font: 600 .8rem var(--body); color: var(--soft); margin-top: 8px; }
-  @media (max-width: 480px) { .jar-wrap { grid-template-columns: 1fr; justify-items: center; } }
-
-  /* ---------- Vales ---------- */
-  .coupons { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; }
-  .coupon { perspective: 900px; height: 220px; }
-  @media (max-width: 480px) { .face.back strong { font-size: 1rem; } .face.back p { font-size: .8rem; line-height: 1.35; } .face { gap: 6px; } }
-  .coupon .inner { position: relative; width: 100%; height: 100%; transition: transform .6s cubic-bezier(.3,1.4,.5,1); transform-style: preserve-3d; }
-  .coupon.flipped .inner { transform: rotateY(180deg); }
-  .face {
-    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
-    border-radius: 20px; padding: 12px; display: grid; align-content: center; justify-items: center; gap: 8px; text-align: center;
-    border: 2px dashed var(--gum); background: var(--card); color: var(--ink); width: 100%;
-  }
-  .face.front { background: repeating-linear-gradient(45deg, #ffe1ea 0 14px, #fff0f4 14px 28px); }
-  .face.front b { font: 700 1.15rem var(--display); color: var(--berry); }
-  .face.front i { font-style: normal; font-size: .8rem; color: var(--soft); }
-  .face.back { transform: rotateY(180deg); }
-  .face.back strong { font: 600 1.1rem var(--display); }
-  .face.back p { font-size: .9rem; color: var(--soft); }
-  .redeem { border: 0; border-radius: 999px; padding: 6px 16px; background: var(--mint); color: #0f3b2f; font-weight: 800; font-size: .85rem; }
-  .coupon.used .face.back::after {
-    content: "CANJEADO 💗"; position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%) rotate(-14deg); font: 700 1.3rem var(--display);
-    color: var(--berry); border: 3px solid var(--berry); border-radius: 10px; padding: 4px 12px;
-    background: rgba(255,255,255,.88);
-  }
-  .coupon.used .redeem { visibility: hidden; }
+  .mood span { font-size: 2.6rem; line-height: 1; }
+  .mood:hover { transform: translateY(-3px); }
+  .mood[aria-pressed="true"] { border-color: var(--berry); background: var(--bg2); color: var(--berry); transform: scale(1.05); }
 
   /* ---------- Dolorómetro ---------- */
-  .meter { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
-  .face-svg { width: 96px; height: 96px; }
+  .meter { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
+  .face-svg { width: 120px; height: 120px; }
   .meter-body { display: grid; gap: 10px; min-width: 0; }
-  input[type=range] { width: 100%; accent-color: var(--berry); height: 28px; }
-  .scale { display: flex; justify-content: space-between; font-size: .78rem; color: var(--soft); font-variant-numeric: tabular-nums; }
+  input[type=range] { width: 100%; accent-color: var(--berry); height: 32px; }
+  .scale { display: flex; justify-content: space-between; font-size: .82rem; color: var(--soft); font-variant-numeric: tabular-nums; }
   #pain-msg { font-weight: 600; min-height: 3.2em; }
+  @media (max-width: 480px) { .meter { grid-template-columns: 1fr; justify-items: center; } .meter-body { width: 100%; } }
 
   /* ---------- Checklist ---------- */
   .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
   .checks label {
-    display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px;
+    display: flex; gap: 14px; align-items: center; padding: 14px 16px; border-radius: 18px;
     background: var(--bg); border: 2px solid transparent; cursor: pointer; transition: background .2s, border-color .2s;
   }
-  .checks input { width: 22px; height: 22px; accent-color: var(--mint-dk); flex: none; }
+  .checks input { width: 26px; height: 26px; accent-color: var(--mint-dk); flex: none; }
   .checks label:has(input:checked) { background: #e3f8f0; border-color: var(--mint); }
   .checks label:has(input:checked) span { text-decoration: line-through; text-decoration-color: var(--mint-dk); color: var(--soft); }
-  .bar { height: 14px; border-radius: 999px; background: var(--bg2); overflow: hidden; }
+  .bar { height: 16px; border-radius: 999px; background: var(--bg2); overflow: hidden; }
   .bar div { height: 100%; width: 0; background: linear-gradient(90deg, var(--mint), var(--mint-dk)); border-radius: inherit; transition: width .5s; }
   #check-msg { font-weight: 700; color: var(--mint-dk); }
 
+  /* ---------- Agua ---------- */
+  .glasses { display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; }
+  .glass {
+    aspect-ratio: 3 / 4; max-width: 100%; border: 3px solid var(--sea2); border-top-width: 2px; background: #fff;
+    border-radius: 6px 6px 16px 16px; position: relative; overflow: hidden; padding: 0;
+  }
+  .glass::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 0;
+    background: linear-gradient(#bfe8f8, #7cc8ea); transition: height .4s cubic-bezier(.3,1.4,.5,1);
+  }
+  .glass.full::after { height: 82%; }
+  .glass span { position: absolute; inset: auto 0 4px; font: 600 .8rem var(--display); color: #2a6d8c; z-index: 1; }
+  #agua-msg { font-weight: 700; color: #2a6d8c; }
+  @media (max-width: 520px) { .glasses { grid-template-columns: repeat(4, 1fr); } }
+
+  /* ---------- Abrazo ---------- */
+  .hug { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; }
+  .hug-btn {
+    width: 170px; height: 170px; border-radius: 50%; border: 0; position: relative;
+    background: conic-gradient(var(--berry) calc(var(--p, 0) * 1%), var(--bg2) 0);
+    display: grid; place-items: center; touch-action: none; user-select: none; -webkit-user-select: none;
+  }
+  .hug-btn span {
+    width: 140px; height: 140px; border-radius: 50%; background: var(--card);
+    display: grid; place-items: center; font: 700 1.1rem/1.15 var(--display); color: var(--berry);
+    text-align: center; padding: 10px;
+  }
+  .hug-btn.full span { background: var(--berry); color: #fff; }
+  .hug > div { min-width: 0; display: grid; gap: 8px; }
+  @media (max-width: 520px) { .hug { grid-template-columns: 1fr; justify-items: center; text-align: center; } }
+
+  /* ---------- Frasco ---------- */
+  .jar-wrap { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; }
+  .jar-btn { background: none; border: 0; padding: 0; border-radius: 20px; }
+  .jar-btn svg { width: 190px; height: auto; display: block; transition: transform .2s; }
+  .jar-btn:hover svg { transform: rotate(-4deg); }
+  .jar-btn.shake svg { animation: shake .5s; }
+  @keyframes shake { 20% { transform: rotate(-10deg); } 40% { transform: rotate(9deg); } 60% { transform: rotate(-6deg); } 80% { transform: rotate(4deg); } }
+  .note {
+    background: #fffbe6; border: 2px dashed #f2d27a; border-radius: 16px; padding: 18px 20px;
+    font: 600 1.9rem/1.2 var(--hand); color: var(--ink); transform: rotate(-1.5deg); min-width: 0;
+  }
+  .note small { display: block; font: 600 .82rem var(--body); color: var(--soft); margin-top: 8px; }
+  @media (max-width: 520px) { .jar-wrap { grid-template-columns: 1fr; justify-items: center; } }
+
+  /* ---------- Juego ---------- */
+  .game {
+    position: relative; height: 380px; border-radius: 24px; overflow: hidden; touch-action: manipulation;
+    background: linear-gradient(180deg, var(--sea) 0%, var(--sea2) 100%); border: 2px solid var(--sea2);
+  }
+  .hud {
+    position: absolute; inset: 12px 12px auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px;
+    font: 600 1rem var(--display); color: #1f5671; z-index: 2; font-variant-numeric: tabular-nums;
+  }
+  .hud span { background: rgba(255,255,255,.75); border-radius: 999px; padding: 4px 12px; }
+  .game-center { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; text-align: center; padding: 60px 16px 16px; z-index: 3; }
+  .game-center p { font: 600 1.2rem var(--display); color: #1f5671; max-width: 22rem; }
+  .gj { position: absolute; left: 0; bottom: -110px; border: 0; background: none; padding: 6px; touch-action: manipulation; animation: rise linear forwards; z-index: 1; }
+  @keyframes rise { to { transform: translateY(-520px); } }
+
+  /* ---------- Vales ---------- */
+  .coupons { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+  .coupon { perspective: 900px; height: 240px; }
+  .coupon .inner { position: relative; width: 100%; height: 100%; transition: transform .6s cubic-bezier(.3,1.4,.5,1); transform-style: preserve-3d; }
+  .coupon.flipped .inner { transform: rotateY(180deg); }
+  .face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: 22px; padding: 14px; display: grid; align-content: center; justify-items: center; gap: 8px; text-align: center;
+    border: 2px dashed var(--gum); background: var(--card); color: var(--ink); width: 100%;
+  }
+  .face.front { background: repeating-linear-gradient(45deg, #ffe1ea 0 14px, #fff0f4 14px 28px); }
+  .face.front b { font: 700 1.25rem var(--display); color: var(--berry); }
+  .face.front i { font-style: normal; font-size: .85rem; color: var(--soft); }
+  .face.back { transform: rotateY(180deg); }
+  .face.back strong { font: 600 1.15rem var(--display); }
+  .face.back p { font-size: .9rem; color: var(--soft); line-height: 1.4; }
+  .redeem { border: 0; border-radius: 999px; padding: 8px 18px; background: var(--mint); color: #0f3b2f; font-weight: 800; font-size: .9rem; }
+  .coupon.used .face.back::after {
+    content: "CANJEADO 💗"; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-14deg); font: 700 1.3rem var(--display);
+    color: var(--berry); border: 3px solid var(--berry); border-radius: 10px; padding: 4px 12px;
+    background: rgba(255,255,255,.9);
+  }
+  .coupon.used .redeem { visibility: hidden; }
+  @media (max-width: 480px) { .face.back strong { font-size: 1.05rem; } .face.back p { font-size: .82rem; line-height: 1.35; } .face { gap: 6px; } }
+
+  /* ---------- Nota ---------- */
+  textarea {
+    width: 100%; min-height: 150px; resize: vertical; border: 2px solid var(--line); border-radius: 18px;
+    padding: 14px 16px; font: 600 1.5rem/1.3 var(--hand); color: var(--ink); background: #fffdfd;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; }
+  .saved { color: var(--mint-dk); font-weight: 700; font-size: .9rem; }
+
   /* ---------- Carta ---------- */
   .env-btn { background: none; border: 0; padding: 0; justify-self: center; border-radius: 12px; }
-  .env-btn svg { width: min(300px, 80vw); height: auto; display: block; }
+  .env-btn svg { width: min(360px, 85vw); height: auto; display: block; }
   .flap { transform-origin: 50% 0; transition: transform .6s; }
   .env-btn.open .flap { transform: scaleY(-1); }
   .letter {
-    background: var(--card); border-radius: 20px; padding: 28px clamp(18px, 5vw, 40px);
-    background-image: repeating-linear-gradient(transparent 0 33px, #fbdbe5 33px 35px);
-    border: 2px solid var(--line); font: 600 1.55rem/35px var(--hand); color: var(--ink);
+    background: var(--card); border-radius: 22px; padding: 30px clamp(18px, 5vw, 44px);
+    background-image: repeating-linear-gradient(transparent 0 37px, #fbdbe5 37px 39px);
+    border: 2px solid var(--line); font: 600 1.7rem/39px var(--hand); color: var(--ink);
     white-space: pre-wrap; min-height: 6em;
   }
   .caret { display: inline-block; width: 2px; height: 1em; background: var(--berry); vertical-align: -2px; animation: blinkc .8s infinite; }
   @keyframes blinkc { 50% { opacity: 0; } }
 
-  footer { text-align: center; color: var(--soft); font-size: .9rem; }
-  footer b { font-family: var(--display); color: var(--berry); font-size: 1.2rem; display: block; }
+  footer { text-align: center; color: var(--soft); font-size: 1rem; }
+  footer b { font-family: var(--display); color: var(--berry); font-size: 1.4rem; display: block; }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -201,42 +293,109 @@
     <span class="eyebrow">Recuperación oficial de encías · edición mimos</span>
     <button class="tooth-btn" id="tooth" aria-label="Tocar al dientito">
       <svg viewBox="0 0 220 240" aria-hidden="true">
-        <!-- encía -->
         <path d="M10 170 Q30 140 60 160 Q85 135 110 160 Q135 135 160 160 Q190 140 210 170 L210 225 Q110 245 10 225 Z" fill="#f78fb0"/>
         <path d="M22 178 Q36 160 58 174" stroke="#fbb8cd" stroke-width="5" fill="none" stroke-linecap="round"/>
-        <!-- curita -->
         <g transform="rotate(-12 150 195)">
           <rect x="118" y="183" width="64" height="24" rx="12" fill="#ffe0b8" stroke="#e8b98a" stroke-width="2"/>
           <rect x="138" y="183" width="24" height="24" fill="#f9cfa0"/>
           <circle cx="145" cy="191" r="1.6" fill="#d9a06b"/><circle cx="155" cy="191" r="1.6" fill="#d9a06b"/>
           <circle cx="145" cy="199" r="1.6" fill="#d9a06b"/><circle cx="155" cy="199" r="1.6" fill="#d9a06b"/>
         </g>
-        <!-- diente -->
         <path d="M50 52 C48 18 96 12 110 34 C124 12 172 18 170 52 C172 92 156 118 152 160 L68 160 C64 118 48 92 50 52 Z"
               fill="#ffffff" stroke="#f1c3d3" stroke-width="4" stroke-linejoin="round"/>
         <path d="M66 46 C66 34 80 28 90 32" stroke="#e6f7f1" stroke-width="7" fill="none" stroke-linecap="round"/>
-        <!-- carita -->
         <ellipse class="eye" cx="88" cy="84" rx="7" ry="10" fill="#4a1630"/>
         <ellipse class="eye" cx="132" cy="84" rx="7" ry="10" fill="#4a1630"/>
         <circle cx="91" cy="80" r="2.6" fill="#fff"/><circle cx="135" cy="80" r="2.6" fill="#fff"/>
         <ellipse cx="74" cy="104" rx="10" ry="6" fill="#ffb3c8"/>
         <ellipse cx="146" cy="104" rx="10" ry="6" fill="#ffb3c8"/>
         <path id="mouth" d="M98 104 Q110 118 122 104" stroke="#4a1630" stroke-width="4" fill="none" stroke-linecap="round"/>
-        <!-- brillitos -->
         <path d="M186 30 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z" fill="#7ad9bd"/>
         <path d="M30 96 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#7ad9bd"/>
       </svg>
     </button>
     <div class="bubble" id="bubble" aria-live="polite">¡Hola, amoricto! Tócame 💕</div>
     <h1>Ashley, eres la más valiente</h1>
-    <p class="bubble" style="box-shadow:none;min-height:0;font-size:1.25rem" aria-live="off">también conocida como <span id="apodo" style="font-family:var(--hand);font-size:1.8rem;color:var(--ink);margin-left:6px">mi amur</span></p>
-    <p class="lead">Te hicieron un recorte de encías y aquí estás, resistiendo como una campeona. Esta página es toda tuya, Ashley: tócalo todo, cada cosa esconde un mimo.</p>
-    <p class="hint">Pasa el dedo o el mouse por la pantalla ✨</p>
+    <p class="aka">también conocida como <span id="apodo">mi amur</span></p>
+    <p class="lead">Te hicieron un recorte de encías y aquí estás, resistiendo como una campeona. Esta página es toda tuya, Ashley: tócalo todo, cada cosa esconde un mimo. Y cada día se guarda en tu diario de recuperación.</p>
+    <p class="hint">Pasa el dedo o el mouse por la pantalla ✨ y espanta a las medusas</p>
+  </section>
+
+  <!-- INFORME -->
+  <section class="panel report" id="informe">
+    <span class="eyebrow">Tu informe diario</span>
+    <div class="report-head">
+      <div class="daynum" id="r-day">Día 1 de recuperación</div>
+      <div class="daydate" id="r-date"></div>
+    </div>
+    <div class="msg-daniel" id="r-msg" hidden><b>💌 Mensaje de Daniel para hoy</b><p id="r-msg-text"></p></div>
+    <div class="tiles" id="r-tiles"></div>
+    <p class="compare" id="r-compare"></p>
+    <div class="nota-view" id="r-nota" hidden><span class="eyebrow">Tu nota de hoy</span><p id="r-nota-text"></p></div>
+    <p class="sync" id="sync">Se guarda en este teléfono.</p>
+    <div id="r-hist-wrap" hidden>
+      <h3>Cómo vas día a día</h3>
+      <div class="chart-wrap" id="r-chart"></div>
+      <ul class="history" id="r-hist"></ul>
+    </div>
+    <div class="owner" id="owner" hidden>
+      <h3>Daniel, déjale un mensaje para hoy</h3>
+      <label for="owner-msg" class="hint">Ashley lo verá arriba de su informe.</label>
+      <textarea id="owner-msg" maxlength="400" placeholder="Buenos días, mi niña…"></textarea>
+      <div class="row"><button class="cta" id="owner-save">Enviar mensaje</button><span class="saved" id="owner-saved" aria-live="polite"></span></div>
+    </div>
+  </section>
+
+  <!-- ÁNIMO -->
+  <section class="panel">
+    <span class="eyebrow">Estación 1 · Ánimo</span>
+    <h2>¿Cómo amaneciste, mi amur?</h2>
+    <div class="moods" id="moods"></div>
+    <p class="lead" id="mood-msg">Elige una carita. Queda guardada en tu informe de hoy.</p>
+  </section>
+
+  <!-- DOLORÓMETRO -->
+  <section class="panel">
+    <span class="eyebrow">Estación 2 · Dolorómetro</span>
+    <h2>¿Cómo va esa boquita hoy?</h2>
+    <div class="meter">
+      <svg class="face-svg" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="46" fill="#ffe1ea" stroke="#f78fb0" stroke-width="4"/>
+        <circle cx="35" cy="42" r="5" fill="#4a1630"/><circle cx="65" cy="42" r="5" fill="#4a1630"/>
+        <path id="pain-mouth" d="M32 64 Q50 78 68 64" stroke="#4a1630" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path id="pain-tear" d="M66 52 q-4 8 0 10 q4 -2 0 -10z" fill="#7ad9bd" opacity="0"/>
+      </svg>
+      <div class="meter-body">
+        <label for="pain"><b>Molestia:</b> <span id="pain-val">2</span> / 10 <span class="hint" id="pain-saved"></span></label>
+        <input type="range" id="pain" min="0" max="10" value="2">
+        <div class="scale"><span>0 · nada</span><span>5 · meh</span><span>10 · auch</span></div>
+      </div>
+    </div>
+    <p id="pain-msg" aria-live="polite"></p>
+  </section>
+
+  <!-- CHECKLIST -->
+  <section class="panel">
+    <span class="eyebrow">Estación 3 · Plan de recuperación</span>
+    <h2>Misiones del día</h2>
+    <p class="lead">Marca lo que ya hiciste hoy. Siempre manda lo que te dijo tu periodoncista; esto es solo para animarte.</p>
+    <ul class="checks" id="checks"></ul>
+    <div class="bar" aria-hidden="true"><div id="bar"></div></div>
+    <p id="check-msg" aria-live="polite"></p>
+  </section>
+
+  <!-- AGUA -->
+  <section class="panel">
+    <span class="eyebrow">Estación 4 · Hidratación</span>
+    <h2>Vasitos de agua</h2>
+    <p class="lead">Toca un vaso cada vez que tomes uno. La meta de hoy son 8.</p>
+    <div class="glasses" id="glasses"></div>
+    <p id="agua-msg" aria-live="polite"></p>
   </section>
 
   <!-- ABRAZO -->
   <section class="panel">
-    <span class="eyebrow">Estación 1 · Abrazo a distancia</span>
+    <span class="eyebrow">Estación 5 · Abrazo a distancia</span>
     <div class="hug">
       <button class="hug-btn" id="hug" aria-label="Mantén presionado para cargar un abrazo"><span id="hug-label">Mantén presionado</span></button>
       <div>
@@ -248,7 +407,7 @@
 
   <!-- FRASCO -->
   <section class="panel">
-    <span class="eyebrow">Estación 2 · Frasco de razones</span>
+    <span class="eyebrow">Estación 6 · Frasco de razones</span>
     <h2>Por qué te amo (versión infinita)</h2>
     <div class="jar-wrap">
       <button class="jar-btn" id="jar" aria-label="Sacar una razón del frasco">
@@ -260,51 +419,42 @@
           <path d="M34 60 Q30 100 36 140" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".8"/>
         </svg>
       </button>
-      <div class="note" id="note" aria-live="polite">Toca el frasco y saca un papelito 💌<small id="note-count"></small></div>
+      <div class="note" id="note" aria-live="polite">Toca el frasco y saca un papelito 💌</div>
+    </div>
+  </section>
+
+  <!-- JUEGO -->
+  <section class="panel">
+    <span class="eyebrow">Estación 7 · Juego</span>
+    <h2>Atrapa medusitas</h2>
+    <p class="lead">Tienes 25 segundos para tocar todas las medusas que puedas antes de que se escapen. Las doradas valen 3.</p>
+    <div class="game" id="game">
+      <div class="hud"><span>⏱ <b id="g-time">25</b>s</span><span>Atrapadas: <b id="g-score">0</b></span><span>Récord de hoy: <b id="g-best">0</b></span></div>
+      <div class="game-center" id="g-center"><p id="g-text">¿Lista, mi medusita?</p><button class="cta mint" id="g-start">Empezar</button></div>
     </div>
   </section>
 
   <!-- VALES -->
   <section class="panel">
-    <span class="eyebrow">Estación 3 · Vales de mimos</span>
+    <span class="eyebrow">Estación 8 · Vales de mimos</span>
     <h2>Vales de Daniel, sin fecha de vencimiento</h2>
     <p class="lead">Voltea cada vale para ver tu premio. Cuando lo quieras, aprieta "Canjear" y yo cumplo.</p>
     <div class="coupons" id="coupons"></div>
   </section>
 
-  <!-- DOLORÓMETRO -->
+  <!-- NOTA -->
   <section class="panel">
-    <span class="eyebrow">Estación 4 · Dolorómetro</span>
-    <h2>¿Cómo va esa boquita hoy?</h2>
-    <div class="meter">
-      <svg class="face-svg" viewBox="0 0 100 100" aria-hidden="true">
-        <circle cx="50" cy="50" r="46" fill="#ffe1ea" stroke="#f78fb0" stroke-width="4"/>
-        <circle cx="35" cy="42" r="5" fill="#4a1630"/><circle cx="65" cy="42" r="5" fill="#4a1630"/>
-        <path id="pain-mouth" d="M32 64 Q50 78 68 64" stroke="#4a1630" stroke-width="4" fill="none" stroke-linecap="round"/>
-        <path id="pain-tear" d="M66 52 q-4 8 0 10 q4 -2 0 -10z" fill="#7ad9bd" opacity="0"/>
-      </svg>
-      <div class="meter-body">
-        <label for="pain"><b>Molestia:</b> <span id="pain-val">2</span> / 10</label>
-        <input type="range" id="pain" min="0" max="10" value="2">
-        <div class="scale"><span>0 · nada</span><span>5 · meh</span><span>10 · auch</span></div>
-      </div>
-    </div>
-    <p id="pain-msg" aria-live="polite"></p>
-  </section>
-
-  <!-- CHECKLIST -->
-  <section class="panel">
-    <span class="eyebrow">Estación 5 · Plan de recuperación</span>
-    <h2>Misiones del día</h2>
-    <p class="lead">Marca lo que ya hiciste hoy. Siempre manda lo que te dijo tu periodoncista; esto es solo para animarte.</p>
-    <ul class="checks" id="checks"></ul>
-    <div class="bar" aria-hidden="true"><div id="bar"></div></div>
-    <p id="check-msg" aria-live="polite"></p>
+    <span class="eyebrow">Estación 9 · Tu nota del día</span>
+    <h2>Cuéntale a Daniel cómo te fue</h2>
+    <p class="lead" id="nota-lead">Lo que escribas aquí aparece en tu informe de hoy.</p>
+    <label for="nota" class="hint">Tu nota</label>
+    <textarea id="nota" maxlength="500" placeholder="Hoy me sentí…"></textarea>
+    <div class="row"><button class="cta" id="nota-save">Guardar nota</button><span class="saved" id="nota-saved" aria-live="polite"></span></div>
   </section>
 
   <!-- CARTA -->
   <section class="panel">
-    <span class="eyebrow">Estación 6 · Correo para ti</span>
+    <span class="eyebrow">Estación 10 · Correo para ti</span>
     <h2>Tienes una carta de Daniel</h2>
     <button class="env-btn" id="env" aria-label="Abrir la carta">
       <svg viewBox="0 0 300 190" aria-hidden="true">
@@ -319,23 +469,57 @@
 
   <footer>
     <b>Pronto vas a sonreír sin dolor, Ashley</b>
-    y esa sonrisa va a estar más bonita que nunca. Te amo.<br>Con amor, <b style="display:inline;font-size:1rem">Daniel</b>
+    y esa sonrisa va a estar más bonita que nunca. Te amo.<br>Con amor, Daniel
   </footer>
 </main>
 
 <script>
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   const store = {
     get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
   };
+  const clone = o => JSON.parse(JSON.stringify(o));
 
-  /* ===== Partículas (corazones y brillitos) ===== */
-  const cv = document.getElementById('fx'), cx = cv.getContext('2d');
-  let W, H, dpr; const parts = [];
+  /* ================= Diario (guardado diario) ================= */
+  const HOY = new Date().toLocaleDateString('en-CA');
+  const vacio = f => ({ fecha: f, dolor: null, animo: null, checks: {}, agua: 0, abrazos: 0, juego: 0, razones: 0, nota: '' });
+  const TAREAS = [
+    'Comí algo blandito y fresquito', 'Tomé mis medicinas a la hora', 'Me puse hielito por fuera de la cara',
+    'Hice mis enjuagues como dijo la doctora', 'Cepillé con muchísimo cuidado', 'Tomé suficiente agua',
+    'Descansé sin culpa', 'Me dejé consentir'
+  ];
+  const MOODS = [['😣', 'Fatal'], ['😕', 'Regular'], ['😐', 'Ahí vamos'], ['🙂', 'Bien'], ['😄', '¡Súper!']];
+  let local = store.get('diario', {});
+  let hoy = Object.assign(vacio(HOY), local[HOY] || {});
+  let dias = clone(local); dias[HOY] = hoy;
+  let mensajes = {}, valesUsados = store.get('vales3', {});
+  let db = null, editado = false, primerSnap = false;
+  let saveTimer = null, saving = false, dirty = false;
+
+  function setSync(txt, on) { const s = $('sync'); s.textContent = txt; s.classList.toggle('on', !!on); }
+  function guardar() {
+    editado = true; hoy.actualizado = Date.now();
+    dias[HOY] = hoy; local[HOY] = hoy; store.set('diario', local);
+    renderInforme(); queueRemote();
+  }
+  function queueRemote() { if (!db) return; dirty = true; clearTimeout(saveTimer); saveTimer = setTimeout(flush, 700); }
+  async function flush() {
+    if (!db || saving || !dirty) return;
+    saving = true; dirty = false; setSync('Guardando…', true);
+    try { await db.doc('dias/' + HOY).set(clone(hoy)); setSync('Guardado en línea · Daniel también ve tu informe 💗', true); }
+    catch (e) { setSync('No se pudo guardar en línea; quedó guardado en este teléfono.'); }
+    saving = false; if (dirty) flush();
+  }
+
+  /* ================= Partículas ================= */
+  const cv = $('fx'), cx = cv.getContext('2d');
+  let W, H; const parts = [];
   const COLORS = ['#d6336c', '#f78fb0', '#ff6b9a', '#7ad9bd', '#ffc2d4', '#ffd166'];
-  function resize() { dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  function resize() { const dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr, 0, 0, dpr, 0, 0); }
   addEventListener('resize', resize); resize();
   function heart(x, y, s) {
     cx.beginPath(); cx.moveTo(x, y + s * .3);
@@ -354,22 +538,23 @@
     for (let i = 0; i < 8; i++) { const r = i % 2 ? s * .35 : s; const a = i * Math.PI / 4; cx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); }
     cx.fill();
   }
+  let running = false;
+  function kick() { if (!running) { running = true; requestAnimationFrame(tick); } }
   function spawn(x, y, n = 1, power = 1) {
     if (reduce) n = Math.min(n, 3);
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2, v = (Math.random() * 4 + 1) * power;
       parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 2 * power, s: 8 + Math.random() * 14,
-        c: COLORS[Math.random() * COLORS.length | 0], life: 1, kind: (q => q < .6 ? 'h' : q < .82 ? 's' : 'j')(Math.random()), r: Math.random() * 6 });
+        c: COLORS[Math.random() * COLORS.length | 0], life: 1, kind: (q => q < .6 ? 'h' : q < .82 ? 's' : 'j')(Math.random()) });
     }
-    if (!running) { running = true; requestAnimationFrame(tick); }
+    kick();
   }
   function rain(n = 60) { for (let i = 0; i < n; i++) setTimeout(() => spawn(Math.random() * W, -20, 1, .6), i * 30); }
-  let running = false;
   function tick() {
     cx.clearRect(0, 0, W, H);
     for (let i = parts.length - 1; i >= 0; i--) {
       const p = parts[i];
-      p.vy += .12; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.life -= .012; p.r += .05;
+      p.vy += .12; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.life -= .012;
       if (p.life <= 0 || p.y > H + 40) { parts.splice(i, 1); continue; }
       cx.globalAlpha = Math.max(p.life, 0); cx.fillStyle = p.c;
       if (p.kind === 'h') heart(p.x, p.y, p.s); else if (p.kind === 'j') jellyP(p.x, p.y, p.s); else star(p.x, p.y, p.s * .5);
@@ -377,211 +562,34 @@
     cx.globalAlpha = 1;
     if (parts.length) requestAnimationFrame(tick); else running = false;
   }
-  let last = 0;
+  let lastTrail = 0;
   addEventListener('pointermove', e => {
     const now = performance.now();
-    if (now - last > 70) { last = now; const p = { x: e.clientX, y: e.clientY }; parts.push({ x: p.x, y: p.y, vx: (Math.random() - .5), vy: -1 - Math.random(), s: 7 + Math.random() * 6, c: COLORS[Math.random() * COLORS.length | 0], life: .8, kind: Math.random() < .5 ? 'h' : 's', r: 0 }); if (!running) { running = true; requestAnimationFrame(tick); } }
+    if (now - lastTrail > 70) {
+      lastTrail = now;
+      parts.push({ x: e.clientX, y: e.clientY, vx: Math.random() - .5, vy: -1 - Math.random(), s: 7 + Math.random() * 6, c: COLORS[Math.random() * COLORS.length | 0], life: .8, kind: Math.random() < .5 ? 'h' : 's' });
+      kick();
+    }
   }, { passive: true });
   const center = el => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
 
-  /* ===== Dientito que habla ===== */
-  const frases = [
-    '¡Ashley, eres mi persona favorita! 💖', 'Ash, eres la más bonita 🌸', 'Daniel te manda un besito 💋', 'Daniel dice que te extraña', 'Mi amur, ya falta poquito', 'Amoricto, eres la más fuerte 💪', 'Mi niña linda, todo va a estar bien', 'Mi amur, tu sonrisa es mi favorita', 'Brillas más que una medusa en el mar', 'Mi medusita bonita 💙', 'Tu sonrisa va a quedar divina ✨', 'Respira, ya pasó lo más difícil',
-    'Helado autorizado por el dientito 🍦', 'Hoy toca dejarse consentir', 'Hablas raro y me encantas igual',
-    'Cada día duele un poquito menos', 'Valiente nivel: máximo 🦷', 'Un besito en la frente (ahí no duele)',
-    'Te amo de aquí a la luna', 'Descansa, yo cuido todo', 'La encía más bonita del mundo'
-  ];
-  const tooth = document.getElementById('tooth'), bubble = document.getElementById('bubble'), mouth = document.getElementById('mouth');
-  let fi = -1;
-  tooth.addEventListener('click', () => {
-    fi = (fi + 1 + (Math.random() * (frases.length - 1) | 0)) % frases.length;
-    bubble.textContent = frases[fi];
-    bubble.classList.remove('pop'); void bubble.offsetWidth; bubble.classList.add('pop');
-    mouth.setAttribute('d', 'M96 102 Q110 126 124 102 Z'); mouth.setAttribute('fill', '#ff6b9a');
-    setTimeout(() => { mouth.setAttribute('d', 'M98 104 Q110 118 122 104'); mouth.setAttribute('fill', 'none'); }, 700);
-    spawn(...center(tooth), 22, 1.2);
-  });
-
-  /* ===== Abrazo ===== */
-  const hug = document.getElementById('hug'), hugLabel = document.getElementById('hug-label'), hugMsg = document.getElementById('hug-msg');
-  let hugP = 0, hugTimer = null, hugsGiven = store.get('abrazos', 0);
-  const hugText = n => `Abrazos entregados: ${n}. Ojo: son acumulables y canjeables en persona.`;
-  if (hugsGiven) hugMsg.textContent = hugText(hugsGiven);
-  function hugStart(e) {
-    e.preventDefault(); if (hugTimer) return;
-    hug.classList.remove('full'); hugLabel.textContent = 'Cargando…';
-    hugTimer = setInterval(() => {
-      hugP = Math.min(hugP + 2.5, 100); hug.style.setProperty('--p', hugP);
-      if (Math.random() < .5) spawn(...center(hug), 1, .5);
-      if (hugP >= 100) {
-        clearInterval(hugTimer); hugTimer = null; hug.classList.add('full'); hugLabel.textContent = '¡Abrazo enviado!';
-        hugsGiven++; store.set('abrazos', hugsGiven); hugMsg.textContent = hugText(hugsGiven);
-        spawn(...center(hug), 50, 1.6); rain(40);
-        setTimeout(() => { hugP = 0; hug.style.setProperty('--p', 0); hug.classList.remove('full'); hugLabel.textContent = 'Otro más'; }, 2200);
-      }
-    }, 40);
-  }
-  function hugEnd() {
-    if (!hugTimer) return; clearInterval(hugTimer); hugTimer = null;
-    if (hugP < 100) { hugLabel.textContent = 'No sueltes 🥺'; const dec = setInterval(() => { hugP = Math.max(hugP - 4, 0); hug.style.setProperty('--p', hugP); if (!hugP || hugTimer) clearInterval(dec); }, 30); }
-  }
-  hug.addEventListener('pointerdown', hugStart);
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => hug.addEventListener(ev, hugEnd));
-  hug.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) hugStart(e); });
-  hug.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') hugEnd(); });
-  hug.addEventListener('contextmenu', e => e.preventDefault());
-
-  /* ===== Frasco de razones ===== */
-  const razones = [
-    'Porque tu risa arregla mis días malos.', 'Porque eres valiente incluso cuando tienes miedo.',
-    'Porque me miras como si yo fuera lo mejor.', 'Porque contigo hasta el silencio es bonito, mi amur.',
-    'Porque eres hermosa por dentro y por fuera (con o sin hinchazón).', 'Porque haces que todo se sienta como casa.',
-    'Porque te preocupas por todos, y hoy me toca cuidarte a ti.', 'Porque tus abrazos curan más que cualquier pastilla.',
-    'Porque eres mi lugar favorito, amoricto.', 'Porque tienes la sonrisa más linda que he visto.',
-    'Porque me haces querer ser mejor cada día.', 'Porque eres Ashley, y con eso basta.',
-    'Porque hasta enojada te ves tierna.', 'Porque elegirte es lo más fácil que hago.',
-    'Porque quiero muchos años más contigo, mi niña.'
-  ];
-  const jar = document.getElementById('jar'), note = document.getElementById('note'), jarHearts = document.getElementById('jar-hearts');
-  let bolsa = [];
-  function drawJar(n) {
-    let s = '';
-    for (let i = 0; i < n; i++) {
-      const x = 40 + (i % 5) * 15 + (i / 5 | 0) % 2 * 6, y = 148 - (i / 5 | 0) * 17;
-      s += `<path transform="translate(${x} ${y}) scale(.9)" d="M0 3 C0 0 -5 0 -5 3 C-5 6 0 8 0 10 C0 8 5 6 5 3 C5 0 0 0 0 3Z" fill="${COLORS[i % 3]}"/>`;
-    }
-    jarHearts.innerHTML = s;
-  }
-  drawJar(razones.length);
-  jar.addEventListener('click', () => {
-    if (!bolsa.length) bolsa = razones.map((_, i) => i).sort(() => Math.random() - .5);
-    const r = razones[bolsa.pop()];
-    jar.classList.remove('shake'); void jar.offsetWidth; jar.classList.add('shake');
-    drawJar(bolsa.length || razones.length);
-    note.innerHTML = r + `<small>Quedan ${bolsa.length} papelitos ${bolsa.length ? '' : '· el frasco se vuelve a llenar solo'}</small>`;
-    note.classList.remove('pop'); void note.offsetWidth; note.classList.add('pop');
-    spawn(...center(jar), 12, .9);
-  });
-
-  /* ===== Vales ===== */
-  const vales = [
-    ['🍦', 'Helado a domicilio', 'Del sabor que quieras, frío y suavecito, como manda la doctora.'],
-    ['🥤', 'Batido o smoothie', 'Te lo preparo yo, bien frío. Con cuchara si hace falta.'],
-    ['🎬', 'Noche de películas', 'Tú eliges todas las películas. Yo no me quejo ni una vez. Promesa.'],
-    ['😴', 'Siesta abrazados', 'Mantita, silencio y tú encima de mí.'],
-    ['💐', 'Flores sorpresa', 'Llegan cuando menos te lo esperes.'],
-    ['🗺️', 'Cita cuando sanes', 'A comer eso crujiente que extrañas. Yo invito.']
-  ];
-  const used = store.get('vales2', {});
-  const wrap = document.getElementById('coupons');
-  vales.forEach(([ico, t, d], i) => {
-    const c = document.createElement('div'); c.className = 'coupon' + (used[i] ? ' used' : '');
-    c.innerHTML = `<div class="inner">
-      <button class="face front" aria-label="Voltear vale ${i + 1}"><b>Vale #${String(i + 1).padStart(2, '0')}</b><span style="font-size:2rem">🎁</span><i>toca para voltear</i></button>
-      <div class="face back"><span style="font-size:2.2rem">${ico}</span><strong>${t}</strong><p>${d}</p><button class="redeem">Canjear</button></div></div>`;
-    c.querySelector('.front').addEventListener('click', () => { c.classList.add('flipped'); spawn(...center(c), 10, .8); });
-    c.querySelector('.back').addEventListener('click', e => { if (!e.target.closest('.redeem')) c.classList.remove('flipped'); });
-    c.querySelector('.redeem').addEventListener('click', () => {
-      c.classList.add('used'); used[i] = true; store.set('vales2', used); spawn(...center(c), 35, 1.3);
-    });
-    wrap.appendChild(c);
-  });
-
-  /* ===== Dolorómetro ===== */
-  const pain = document.getElementById('pain'), painVal = document.getElementById('pain-val'),
-        painMsg = document.getElementById('pain-msg'), pm = document.getElementById('pain-mouth'), tear = document.getElementById('pain-tear');
-  const painTexts = [
-    [0, '¡Nada de dolor! Eres una máquina. Igual te mereces un helado de premio.'],
-    [3, 'Poquito, ¿no, mi amur? Vas súper bien. Sigue con comidas blanditas y frías.'],
-    [6, 'Ay, amoricto. Hielito por fuera, a descansar y te mando un abrazo ahora mismo.'],
-    [8, 'Eso duele de verdad, mi niña. Toma lo que te recetaron a su hora y llámame, voy para allá con mimos.'],
-    [10, 'Mucho dolor no es normal: avísale a tu periodoncista, y a mí también. No estás sola.']
-  ];
-  function updatePain() {
-    const v = +pain.value; painVal.textContent = v;
-    painMsg.textContent = painTexts.find(([lim]) => v <= lim)[1];
-    const k = 1 - v / 5; // >0 sonrisa, <0 tristeza
-    pm.setAttribute('d', `M32 66 Q50 ${66 + k * 12} 68 66`);
-    tear.setAttribute('opacity', v >= 7 ? 1 : 0);
-  }
-  pain.addEventListener('input', updatePain);
-  pain.addEventListener('change', () => { if (+pain.value >= 6) spawn(...center(pain), 16, .8); });
-  updatePain();
-
-  /* ===== Checklist ===== */
-  const tareas = [
-    'Comí algo blandito y fresquito', 'Tomé mis medicinas a la hora', 'Me puse hielito por fuera de la cara',
-    'Hice mis enjuagues como dijo la doctora', 'Cepillé con muchísimo cuidado', 'Tomé suficiente agua',
-    'Descansé sin culpa', 'Me dejé consentir'
-  ];
-  const hoy = new Date().toISOString().slice(0, 10);
-  let estado = store.get('checks', {}); if (estado.dia !== hoy) estado = { dia: hoy, v: {} };
-  const ul = document.getElementById('checks'), bar = document.getElementById('bar'), cmsg = document.getElementById('check-msg');
-  tareas.forEach((t, i) => {
-    const li = document.createElement('li');
-    li.innerHTML = `<label><input type="checkbox" id="chk${i}" ${estado.v[i] ? 'checked' : ''}><span>${t}</span></label>`;
-    li.querySelector('input').addEventListener('change', e => {
-      estado.v[i] = e.target.checked; store.set('checks', estado); updChecks(true);
-      if (e.target.checked) spawn(...center(e.target), 8, .6);
-    });
-    ul.appendChild(li);
-  });
-  function updChecks(anim) {
-    const n = tareas.filter((_, i) => estado.v[i]).length, pct = n / tareas.length * 100;
-    bar.style.width = pct + '%';
-    cmsg.textContent = n === tareas.length ? '¡Día completado, amoricto! Eres oficialmente la mejor paciente del universo 🏆'
-      : n === 0 ? 'Vamos de a poquito, sin prisa.' : `${n} de ${tareas.length}. ¡Vas genial!`;
-    if (anim && n === tareas.length) rain(80);
-  }
-  updChecks(false);
-
-  /* ===== Carta ===== */
-  const carta = `Mi Ashley hermosa:
-
-Sé que estos días no son fáciles. Te duele, no puedes comer lo que quieres y hasta hablas un poquito raro… y aun así sigues siendo la persona más bonita que conozco, mi amur.
-
-Mi niña, fuiste muy valiente al hacerte este tratamiento y me llenas de orgullo.
-
-Prometo cuidarte, traerte helado, hacerte reír (despacito, para que no duela) y estar contigo en cada día de la recuperación.
-
-Muy pronto vas a sonreír sin molestias, y esa sonrisa va a ser todavía más linda.
-
-Te amo muchísimo, amoricto. 💗
-
-Tuyo siempre,
-Daniel`;
-  const env = document.getElementById('env'), letter = document.getElementById('letter');
-  let typed = false;
-  env.addEventListener('click', () => {
-    env.classList.add('open'); spawn(...center(env), 30, 1.2);
-    if (typed) return; typed = true;
-    setTimeout(() => {
-      letter.hidden = false; letter.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-      if (reduce) { letter.textContent = carta; return; }
-      let i = 0; const caret = '<span class="caret"></span>';
-      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-      const step = () => { i += 2; letter.innerHTML = esc(carta.slice(0, i)) + (i < carta.length ? caret : ''); if (i < carta.length) setTimeout(step, 28); else rain(50); };
-      step();
-    }, 500);
-  });
-
-  // Medusas de fondo
+  /* ================= Medusas ================= */
   const JC = [['#ffb3c8', '#f78fb0'], ['#b9ecdc', '#7ad9bd'], ['#d9c8ff', '#b49cf2'], ['#bfe3ff', '#86c5f2']];
-  const jbox = document.getElementById('jellies'), jellies = [];
-  for (let i = 0; i < 7; i++) {
-    const [f, s] = JC[i % JC.length], size = 38 + Math.random() * 44, d = 18 + Math.random() * 16;
-    const j = document.createElement('div'); j.className = 'jelly';
-    j.style.width = size + 'px'; j.style.opacity = .6 + Math.random() * .25;
-    jellies.push({ el: j, x: Math.random() * (innerWidth - size), y: Math.random() * innerHeight, sp: .25 + Math.random() * .45, ph: Math.random() * 6.28, amp: .6 + Math.random(), size, pushX: 0, pushY: 0 });
-    j.innerHTML = `<svg viewBox="0 0 60 100"><path d="M4 32 C4 6 56 6 56 32 Q51 37 46 32 Q41 37 35 32 Q30 37 25 32 Q19 37 14 32 Q9 37 4 32Z" fill="${f}" stroke="${s}" stroke-width="2"/>
+  const jellySVG = (f, s) => `<svg viewBox="0 0 60 100"><path d="M4 32 C4 6 56 6 56 32 Q51 37 46 32 Q41 37 35 32 Q30 37 25 32 Q19 37 14 32 Q9 37 4 32Z" fill="${f}" stroke="${s}" stroke-width="2"/>
       <ellipse cx="22" cy="20" rx="5" ry="3" fill="#fff" opacity=".7"/>
       <circle cx="24" cy="26" r="2" fill="#4a1630"/><circle cx="36" cy="26" r="2" fill="#4a1630"/>
       <g class="tent" fill="none" stroke="${s}" stroke-width="2.5" stroke-linecap="round">
         <path d="M14 36 q-5 12 0 24 q5 12 0 24"/><path d="M25 36 q5 14 0 28 q-5 12 0 26"/>
         <path d="M35 36 q-5 14 0 28 q5 12 0 22"/><path d="M46 36 q5 12 0 24 q-5 10 0 20"/></g></svg>`;
+  const jbox = $('jellies'), jellies = [];
+  for (let i = 0; i < 8; i++) {
+    const [f, s] = JC[i % JC.length], size = 44 + Math.random() * 50;
+    const j = document.createElement('div'); j.className = 'jelly';
+    j.style.width = size + 'px'; j.style.opacity = .6 + Math.random() * .25;
+    j.innerHTML = jellySVG(f, s);
+    jellies.push({ el: j, x: Math.random() * (innerWidth - size), y: Math.random() * innerHeight, sp: .25 + Math.random() * .45, ph: Math.random() * 6.28, amp: .6 + Math.random(), size, pushX: 0, pushY: 0 });
     jbox.appendChild(j);
   }
-  // Nadan por toda la pantalla, reaccionan al scroll y se apartan del dedo/mouse
   let lastSY = scrollY, mx = -999, my = -999;
   addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
   addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') mx = my = -999; });
@@ -607,12 +615,401 @@ Daniel`;
   if (reduce) jellies.forEach(q => q.el.style.transform = `translate(${q.x}px, ${q.y}px)`);
   else requestAnimationFrame(swimLoop);
 
-  // Apodos que van cambiando
-  const apodos = ['mi amur', 'amoricto', 'mi niña', 'Ash'], apEl = document.getElementById('apodo');
+  /* ================= Dientito ================= */
+  const frases = [
+    '¡Ashley, eres mi persona favorita! 💖', 'Ash, eres la más bonita 🌸', 'Daniel te manda un besito 💋', 'Daniel dice que te extraña',
+    'Mi amur, ya falta poquito', 'Amoricto, eres la más fuerte 💪', 'Mi niña linda, todo va a estar bien', 'Mi amur, tu sonrisa es mi favorita',
+    'Brillas más que una medusa en el mar', 'Mi medusita bonita 💙', 'Tu sonrisa va a quedar divina ✨', 'Respira, ya pasó lo más difícil',
+    'Helado autorizado por el dientito 🍦', 'Hoy toca dejarse consentir', 'Hablas raro y me encantas igual',
+    'Cada día duele un poquito menos', 'Valiente nivel: máximo 🦷', 'Un besito en la frente (ahí no duele)',
+    'Te amo de aquí a la luna', 'Descansa, Daniel cuida todo', 'La encía más bonita del mundo', '¿Ya tomaste agüita, amoricto?'
+  ];
+  const tooth = $('tooth'), bubble = $('bubble'), mouth = $('mouth');
+  let fi = -1;
+  tooth.addEventListener('click', () => {
+    fi = (fi + 1 + (Math.random() * (frases.length - 1) | 0)) % frases.length;
+    bubble.textContent = frases[fi];
+    bubble.classList.remove('pop'); void bubble.offsetWidth; bubble.classList.add('pop');
+    mouth.setAttribute('d', 'M96 102 Q110 126 124 102 Z'); mouth.setAttribute('fill', '#ff6b9a');
+    setTimeout(() => { mouth.setAttribute('d', 'M98 104 Q110 118 122 104'); mouth.setAttribute('fill', 'none'); }, 700);
+    spawn(...center(tooth), 24, 1.2);
+  });
+  const apodos = ['mi amur', 'amoricto', 'mi niña', 'Ash', 'mi medusita'], apEl = $('apodo');
   let ai = 0;
-  if (!reduce) setInterval(() => { ai = (ai + 1) % apodos.length; apEl.animate([{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(-8px)' }], { duration: 200 }).onfinish = () => { apEl.textContent = apodos[ai]; apEl.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 250 }); }; }, 2200);
+  if (!reduce) setInterval(() => {
+    ai = (ai + 1) % apodos.length;
+    apEl.animate([{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(-8px)' }], { duration: 200 }).onfinish = () => {
+      apEl.textContent = apodos[ai];
+      apEl.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 250 });
+    };
+  }, 2200);
 
-  // Bienvenida
+  /* ================= Ánimo ================= */
+  const moodsEl = $('moods');
+  const moodMsgs = [
+    'Ay, mi niña. Hoy toca mantita, helado y cero preocupaciones. Daniel ya lo sabe.',
+    'Un día regular también cuenta. Vas avanzando aunque no se sienta.',
+    'Ahí vamos, amoricto. Paso a pasito.',
+    '¡Qué bueno, mi amur! Se nota que estás sanando.',
+    '¡Súper! Esa energía me encanta 💃'
+  ];
+  MOODS.forEach(([e, t], i) => {
+    const b = document.createElement('button'); b.className = 'mood'; b.setAttribute('aria-pressed', 'false');
+    b.innerHTML = `<span aria-hidden="true">${e}</span>${t}`;
+    b.addEventListener('click', () => { hoy.animo = i; paintMood(); guardar(); spawn(...center(b), 14, .9); });
+    moodsEl.appendChild(b);
+  });
+  function paintMood() {
+    [...moodsEl.children].forEach((b, i) => b.setAttribute('aria-pressed', String(hoy.animo === i)));
+    $('mood-msg').textContent = hoy.animo == null ? 'Elige una carita. Queda guardada en tu informe de hoy.' : moodMsgs[hoy.animo];
+  }
+
+  /* ================= Dolorómetro ================= */
+  const pain = $('pain');
+  const painTexts = [
+    [0, '¡Nada de dolor! Eres una máquina. Igual te mereces un helado de premio.'],
+    [3, 'Poquito, ¿no, mi amur? Vas súper bien. Sigue con comidas blanditas y frías.'],
+    [6, 'Ay, amoricto. Hielito por fuera, a descansar y te mando un abrazo ahora mismo.'],
+    [8, 'Eso duele de verdad, mi niña. Toma lo que te recetaron a su hora y llámame, voy para allá con mimos.'],
+    [10, 'Mucho dolor no es normal: avísale a tu periodoncista, y a mí también. No estás sola.']
+  ];
+  const painShort = v => v <= 0 ? 'nada de dolor' : v <= 3 ? 'poquito' : v <= 6 ? 'molesta' : v <= 8 ? 'duele bastante' : 'mucho dolor';
+  function paintPain() {
+    const v = +pain.value; $('pain-val').textContent = v;
+    $('pain-msg').textContent = painTexts.find(([lim]) => v <= lim)[1];
+    const k = 1 - v / 5;
+    $('pain-mouth').setAttribute('d', `M32 66 Q50 ${66 + k * 12} 68 66`);
+    $('pain-tear').setAttribute('opacity', v >= 7 ? 1 : 0);
+    $('pain-saved').textContent = hoy.dolor == null ? '· muévelo para guardarlo' : '· guardado ✓';
+  }
+  pain.addEventListener('input', () => { hoy.dolor = +pain.value; paintPain(); });
+  pain.addEventListener('change', () => { hoy.dolor = +pain.value; paintPain(); guardar(); if (+pain.value >= 6) spawn(...center(pain), 16, .8); });
+
+  /* ================= Checklist ================= */
+  const ul = $('checks');
+  TAREAS.forEach((t, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<label><input type="checkbox" id="chk${i}"><span>${esc(t)}</span></label>`;
+    li.querySelector('input').addEventListener('change', e => {
+      hoy.checks[i] = e.target.checked; paintChecks(true); guardar();
+      if (e.target.checked) spawn(...center(e.target), 8, .6);
+    });
+    ul.appendChild(li);
+  });
+  const nChecks = d => TAREAS.filter((_, i) => d.checks && d.checks[i]).length;
+  function paintChecks(anim) {
+    TAREAS.forEach((_, i) => { $('chk' + i).checked = !!hoy.checks[i]; });
+    const n = nChecks(hoy);
+    $('bar').style.width = n / TAREAS.length * 100 + '%';
+    $('check-msg').textContent = n === TAREAS.length ? '¡Día completado, amoricto! Eres oficialmente la mejor paciente del universo 🏆'
+      : n === 0 ? 'Vamos de a poquito, sin prisa.' : `${n} de ${TAREAS.length}. ¡Vas genial!`;
+    if (anim && n === TAREAS.length) rain(80);
+  }
+
+  /* ================= Agua ================= */
+  const gl = $('glasses');
+  for (let i = 0; i < 8; i++) {
+    const b = document.createElement('button'); b.className = 'glass'; b.setAttribute('aria-label', `Vaso ${i + 1}`);
+    b.innerHTML = `<span>${i + 1}</span>`;
+    b.addEventListener('click', () => {
+      hoy.agua = hoy.agua === i + 1 ? i : i + 1; paintAgua(); guardar();
+      spawn(...center(b), hoy.agua === 8 ? 40 : 6, hoy.agua === 8 ? 1.3 : .6);
+    });
+    gl.appendChild(b);
+  }
+  function paintAgua() {
+    [...gl.children].forEach((b, i) => b.classList.toggle('full', i < hoy.agua));
+    $('agua-msg').textContent = hoy.agua >= 8 ? '¡Meta cumplida! Hidratadísima, mi medusita 🌊' : hoy.agua ? `${hoy.agua} de 8 vasitos. ¡Sigue así!` : 'Todavía ningún vaso hoy.';
+  }
+
+  /* ================= Abrazo ================= */
+  const hug = $('hug'), hugLabel = $('hug-label');
+  let hugP = 0, hugTimer = null;
+  const totalAbrazos = () => Object.values(dias).reduce((a, d) => a + (d.abrazos || 0), 0);
+  function paintHug() {
+    if (!hoy.abrazos) return;
+    $('hug-msg').textContent = `Abrazos hoy: ${hoy.abrazos} · en total: ${totalAbrazos()}. Son acumulables y canjeables en persona con Daniel.`;
+  }
+  function hugStart(e) {
+    e.preventDefault(); if (hugTimer) return;
+    hug.classList.remove('full'); hugLabel.textContent = 'Cargando…';
+    hugTimer = setInterval(() => {
+      hugP = Math.min(hugP + 2, 100); hug.style.setProperty('--p', hugP);
+      if (Math.random() < .5) spawn(...center(hug), 1, .5);
+      if (hugP >= 100) {
+        clearInterval(hugTimer); hugTimer = null; hug.classList.add('full'); hugLabel.textContent = '¡Abrazo enviado!';
+        hoy.abrazos++; guardar(); paintHug();
+        spawn(...center(hug), 50, 1.6); rain(40);
+        setTimeout(() => { hugP = 0; hug.style.setProperty('--p', 0); hug.classList.remove('full'); hugLabel.textContent = 'Otro más'; }, 2200);
+      }
+    }, 40);
+  }
+  function hugEnd() {
+    if (!hugTimer) return; clearInterval(hugTimer); hugTimer = null;
+    if (hugP < 100) { hugLabel.textContent = 'No sueltes 🥺'; const dec = setInterval(() => { hugP = Math.max(hugP - 4, 0); hug.style.setProperty('--p', hugP); if (!hugP || hugTimer) clearInterval(dec); }, 30); }
+  }
+  hug.addEventListener('pointerdown', hugStart);
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => hug.addEventListener(ev, hugEnd));
+  hug.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) hugStart(e); });
+  hug.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') hugEnd(); });
+  hug.addEventListener('contextmenu', e => e.preventDefault());
+
+  /* ================= Frasco ================= */
+  const razones = [
+    'Porque tu risa arregla mis días malos.', 'Porque eres valiente incluso cuando tienes miedo.',
+    'Porque me miras como si yo fuera lo mejor.', 'Porque contigo hasta el silencio es bonito, mi amur.',
+    'Porque eres hermosa por dentro y por fuera (con o sin hinchazón).', 'Porque haces que todo se sienta como casa.',
+    'Porque te preocupas por todos, y hoy me toca cuidarte a ti.', 'Porque tus abrazos curan más que cualquier pastilla.',
+    'Porque eres mi lugar favorito, amoricto.', 'Porque tienes la sonrisa más linda que he visto.',
+    'Porque me haces querer ser mejor cada día.', 'Porque eres Ashley, y con eso basta.',
+    'Porque hasta enojada te ves tierna.', 'Porque elegirte es lo más fácil que hago.',
+    'Porque quiero muchos años más contigo, mi niña.', 'Porque te emocionas con las medusas como una niña chiquita.',
+    'Porque tu voz es mi canción favorita.', 'Porque me cuidas incluso cuando la que necesita cuidado eres tú.',
+    'Porque contigo aprendí lo que es querer bonito.', 'Porque eres mi persona, en todos los días.',
+    'Porque me haces reír hasta que me duele la panza.', 'Porque eres suavecita como una medusa (pero sin picar).',
+    'Porque cada día contigo es mi favorito.', 'Porque eres la más valiente que conozco.', 'Porque sí. Porque eres tú. Porque te amo.'
+  ];
+  const jar = $('jar'), note = $('note'), jarHearts = $('jar-hearts');
+  let bolsa = [];
+  function drawJar(n) {
+    let s = '';
+    for (let i = 0; i < Math.min(n, 25); i++) {
+      const x = 40 + (i % 5) * 15 + (i / 5 | 0) % 2 * 6, y = 148 - (i / 5 | 0) * 17;
+      s += `<path transform="translate(${x} ${y}) scale(.9)" d="M0 3 C0 0 -5 0 -5 3 C-5 6 0 8 0 10 C0 8 5 6 5 3 C5 0 0 0 0 3Z" fill="${COLORS[i % 3]}"/>`;
+    }
+    jarHearts.innerHTML = s;
+  }
+  drawJar(razones.length);
+  jar.addEventListener('click', () => {
+    if (!bolsa.length) bolsa = razones.map((_, i) => i).sort(() => Math.random() - .5);
+    const r = razones[bolsa.pop()];
+    jar.classList.remove('shake'); void jar.offsetWidth; jar.classList.add('shake');
+    drawJar(bolsa.length || razones.length);
+    note.innerHTML = esc(r) + `<small>Quedan ${bolsa.length} papelitos${bolsa.length ? '' : ' · el frasco se vuelve a llenar solo'}</small>`;
+    note.classList.remove('pop'); void note.offsetWidth; note.classList.add('pop');
+    hoy.razones++; guardar();
+    spawn(...center(jar), 12, .9);
+  });
+
+  /* ================= Juego ================= */
+  const game = $('game'), gCenter = $('g-center');
+  let gScore = 0, gTime = 25, gOn = false, gSpawn = null, gClock = null;
+  function paintBest() { $('g-best').textContent = hoy.juego || 0; }
+  function gjelly() {
+    const gold = Math.random() < .12;
+    const [f, s] = gold ? ['#ffe08a', '#f2b632'] : JC[Math.random() * JC.length | 0];
+    const size = 50 + Math.random() * 26, dur = 3.2 + Math.random() * 2.6;
+    const b = document.createElement('button'); b.className = 'gj'; b.setAttribute('aria-label', gold ? 'Medusa dorada' : 'Medusa');
+    b.style.width = size + 12 + 'px';
+    b.style.left = Math.random() * Math.max(game.clientWidth - size - 12, 0) + 'px';
+    b.style.animationDuration = Math.max(dur - (25 - gTime) * .06, 2) + 's';
+    b.innerHTML = jellySVG(f, s);
+    b.addEventListener('pointerdown', e => {
+      e.preventDefault(); if (!gOn) return;
+      gScore += gold ? 3 : 1; $('g-score').textContent = gScore;
+      const r = b.getBoundingClientRect(); spawn(r.left + r.width / 2, r.top + r.height / 3, gold ? 20 : 8, gold ? 1.1 : .7);
+      b.remove();
+    });
+    b.addEventListener('animationend', () => b.remove());
+    game.appendChild(b);
+  }
+  function gStart() {
+    gScore = 0; gTime = 25; gOn = true; $('g-score').textContent = 0; $('g-time').textContent = 25;
+    gCenter.hidden = true; game.querySelectorAll('.gj').forEach(n => n.remove());
+    gSpawn = setInterval(gjelly, 520); gjelly();
+    gClock = setInterval(() => { gTime--; $('g-time').textContent = gTime; if (gTime <= 0) gEnd(); }, 1000);
+  }
+  function gEnd() {
+    gOn = false; clearInterval(gSpawn); clearInterval(gClock);
+    setTimeout(() => game.querySelectorAll('.gj').forEach(n => n.remove()), 400);
+    const record = gScore > (hoy.juego || 0);
+    if (record) { hoy.juego = gScore; guardar(); paintBest(); rain(50); }
+    $('g-text').textContent = gScore === 0 ? 'Se escaparon todas 🙈 ¿Otra vez?' : record ? `¡Nuevo récord de hoy! Atrapaste ${gScore} 🏆` : `Atrapaste ${gScore}. ¡Bien, mi medusita!`;
+    $('g-start').textContent = 'Jugar otra vez';
+    gCenter.hidden = false;
+  }
+  $('g-start').addEventListener('click', gStart);
+
+  /* ================= Vales ================= */
+  const vales = [
+    ['🍦', 'Helado a domicilio', 'Del sabor que quieras, frío y suavecito, como manda la doctora.'],
+    ['🥤', 'Batido o smoothie', 'Te lo preparo yo, bien frío. Con cuchara si hace falta.'],
+    ['🎬', 'Noche de películas', 'Tú eliges todas las películas. Yo no me quejo ni una vez. Promesa.'],
+    ['😴', 'Siesta abrazados', 'Mantita, silencio y tú encima de mí.'],
+    ['💐', 'Flores sorpresa', 'Llegan cuando menos te lo esperes.'],
+    ['🗺️', 'Cita cuando sanes', 'A comer eso crujiente que extrañas. Yo invito.']
+  ];
+  const wrap = $('coupons'), couponEls = [];
+  vales.forEach(([ico, t, d], i) => {
+    const c = document.createElement('div'); c.className = 'coupon';
+    c.innerHTML = `<div class="inner">
+      <button class="face front" aria-label="Voltear vale ${i + 1}"><b>Vale #${String(i + 1).padStart(2, '0')}</b><span style="font-size:2.2rem">🎁</span><i>toca para voltear</i></button>
+      <div class="face back"><span style="font-size:2.4rem">${ico}</span><strong>${t}</strong><p>${d}</p><button class="redeem">Canjear</button></div></div>`;
+    c.querySelector('.front').addEventListener('click', () => { c.classList.add('flipped'); spawn(...center(c), 10, .8); });
+    c.querySelector('.back').addEventListener('click', e => { if (!e.target.closest('.redeem')) c.classList.remove('flipped'); });
+    c.querySelector('.redeem').addEventListener('click', async () => {
+      valesUsados = { ...valesUsados, [i]: HOY }; store.set('vales3', valesUsados); paintVales(); renderInforme();
+      spawn(...center(c), 35, 1.3);
+      if (db) { try { await db.doc('vales/canjes').set(valesUsados); } catch {} }
+    });
+    couponEls.push(c); wrap.appendChild(c);
+  });
+  function paintVales() { couponEls.forEach((c, i) => c.classList.toggle('used', !!valesUsados[i])); }
+
+  /* ================= Nota ================= */
+  const nota = $('nota');
+  $('nota-save').addEventListener('click', () => {
+    hoy.nota = nota.value.trim().slice(0, 500); guardar();
+    $('nota-saved').textContent = 'Guardada ✓'; setTimeout(() => $('nota-saved').textContent = '', 2500);
+    spawn(...center($('nota-save')), 16, .9);
+  });
+
+  /* ================= Informe ================= */
+  const fmtFecha = (f, opts = { weekday: 'long', day: 'numeric', month: 'long' }) => new Date(f + 'T12:00:00').toLocaleDateString('es', opts);
+  const diffDias = (a, b) => Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / 864e5);
+  const tieneDatos = d => d && (d.dolor != null || d.animo != null || nChecks(d) || d.agua || d.abrazos || d.juego || d.razones || d.nota);
+  function renderInforme() {
+    const fechas = Object.keys(dias).filter(f => f === HOY || tieneDatos(dias[f])).sort();
+    const inicio = fechas[0] || HOY;
+    $('r-day').textContent = `Día ${diffDias(inicio, HOY) + 1} de recuperación`;
+    $('r-date').textContent = (t => t[0].toUpperCase() + t.slice(1))(fmtFecha(HOY));
+
+    const m = mensajes[HOY];
+    $('r-msg').hidden = !(m && m.texto);
+    if (m && m.texto) $('r-msg-text').textContent = m.texto;
+
+    const canjeHoy = vales.filter((_, i) => valesUsados[i] === HOY).map(v => v[1]);
+    const tiles = [
+      ['Molestia', hoy.dolor == null ? '—' : `${hoy.dolor}/10`, hoy.dolor == null ? 'sin registrar' : painShort(hoy.dolor)],
+      ['Ánimo', hoy.animo == null ? '—' : MOODS[hoy.animo][0], hoy.animo == null ? 'sin registrar' : MOODS[hoy.animo][1]],
+      ['Misiones', `${nChecks(hoy)}/${TAREAS.length}`, nChecks(hoy) === TAREAS.length ? '¡completas!' : 'de hoy'],
+      ['Agua', `${hoy.agua}/8`, 'vasitos'],
+      ['Abrazos', hoy.abrazos, `${totalAbrazos()} en total`],
+      ['Medusas', hoy.juego || 0, 'récord de hoy'],
+      ['Razones', hoy.razones, 'papelitos leídos'],
+      ['Vales', canjeHoy.length, canjeHoy.length ? canjeHoy.join(', ') : 'canjeados hoy']
+    ];
+    $('r-tiles').innerHTML = tiles.map(([a, b, c]) => `<div class="tile"><span>${esc(a)}</span><b>${esc(b)}</b><small>${esc(c)}</small></div>`).join('');
+
+    const prev = fechas.filter(f => f < HOY).reverse().find(f => dias[f].dolor != null);
+    let cmp = '';
+    if (prev && hoy.dolor != null) {
+      const d = dias[prev].dolor - hoy.dolor, dia = fmtFecha(prev, { weekday: 'long' });
+      cmp = d > 0 ? `Hoy te duele ${d} menos que el ${dia}. ¡Estás sanando! 🎉`
+        : d < 0 ? `Hoy duele ${-d} más que el ${dia}. Es normal tener días así; descansa mucho, mi niña.`
+        : `Igual que el ${dia}. Paso a pasito, amoricto.`;
+    } else if (hoy.dolor == null) cmp = 'Registra tu molestia en el dolorómetro para ver cómo vas.';
+    $('r-compare').textContent = cmp;
+
+    $('r-nota').hidden = !hoy.nota;
+    $('r-nota-text').textContent = hoy.nota || '';
+
+    const pasados = fechas.filter(f => f !== HOY).reverse();
+    const conDolor = fechas.filter(f => dias[f].dolor != null).slice(-14);
+    $('r-hist-wrap').hidden = !pasados.length && conDolor.length < 2;
+    $('r-chart').innerHTML = conDolor.length >= 2 ? chart(conDolor) : '';
+    $('r-hist').innerHTML = pasados.map(f => {
+      const d = dias[f], bits = [];
+      if (d.dolor != null) bits.push(`molestia ${d.dolor}/10`);
+      if (d.animo != null) bits.push(`${MOODS[d.animo][0]} ${MOODS[d.animo][1].toLowerCase()}`);
+      bits.push(`misiones ${nChecks(d)}/${TAREAS.length}`, `agua ${d.agua || 0}/8`, `${d.abrazos || 0} abrazos`);
+      if (d.juego) bits.push(`${d.juego} medusas`);
+      const msg = mensajes[f] && mensajes[f].texto ? `<i>Daniel: ${esc(mensajes[f].texto)}</i>` : '';
+      return `<li><b>Día ${diffDias(inicio, f) + 1} · ${esc(fmtFecha(f, { weekday: 'short', day: 'numeric', month: 'short' }))}</b><div class="det">${esc(bits.join(' · '))}${d.nota ? `<i>“${esc(d.nota)}”</i>` : ''}${msg}</div></li>`;
+    }).join('');
+  }
+  function chart(fs) {
+    const w = 640, h = 200, L = 34, R = 16, T = 22, B = 30, n = fs.length;
+    const x = i => L + (w - L - R) * (i / (n - 1)), y = v => T + (h - T - B) * (1 - v / 10);
+    const pts = fs.map((f, i) => [x(i), y(dias[f].dolor)]);
+    const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+    const area = `${line} L${pts[n - 1][0].toFixed(1)} ${y(0)} L${pts[0][0].toFixed(1)} ${y(0)} Z`;
+    let g = '';
+    [0, 5, 10].forEach(v => { g += `<line x1="${L}" x2="${w - R}" y1="${y(v)}" y2="${y(v)}" stroke="#f6c6d6" stroke-dasharray="${v ? '4 4' : '0'}"/><text class="ax" x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`; });
+    fs.forEach((f, i) => { g += `<text class="ax" x="${x(i)}" y="${h - 8}" text-anchor="${i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle'}">${esc(fmtFecha(f, { day: 'numeric', month: 'numeric' }))}</text>`; });
+    const dots = pts.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="${i === n - 1 ? 7 : 4.5}" fill="${i === n - 1 ? '#d6336c' : '#fff'}" stroke="#d6336c" stroke-width="3"/>`).join('');
+    return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Molestia por día, de 0 a 10">${g}<path d="${area}" fill="#ffe1ea" opacity=".8"/><path d="${line}" fill="none" stroke="#d6336c" stroke-width="3" stroke-linejoin="round"/>${dots}<text class="ax" x="${L}" y="12">molestia (0–10)</text></svg>`;
+  }
+
+  /* ================= Pintar todo desde "hoy" ================= */
+  function hydrate() {
+    if (hoy.dolor != null) pain.value = hoy.dolor;
+    paintPain(); paintMood(); paintChecks(false); paintAgua(); paintHug(); paintBest(); paintVales();
+    if (document.activeElement !== nota) nota.value = hoy.nota || '';
+    renderInforme();
+  }
+  hydrate();
+
+  /* ================= Conexión en línea (claude.ai) ================= */
+  (async () => {
+    if (!window.claude || typeof window.claude.use !== 'function') { setSync('Se guarda en este teléfono.'); return; }
+    setSync('Conectando tu diario…');
+    const timer = setTimeout(() => { if (!primerSnap) setSync('Se guarda en este teléfono.'); }, 10000);
+    let d = null; try { d = await window.claude.use('db'); } catch {}
+    if (!d) { clearTimeout(timer); setSync('Se guarda en este teléfono.'); return; }
+    db = d;
+    $('nota-lead').textContent = 'Lo que escribas aquí aparece en tu informe de hoy, y Daniel también lo puede leer.';
+    db.collection('dias').onSnapshot(snap => {
+      clearTimeout(timer);
+      const remotos = {}; snap.docs.forEach(x => { remotos[x.id] = x.data(); });
+      const rHoy = remotos[HOY];
+      if (!primerSnap) {
+        primerSnap = true;
+        if (rHoy && !editado) { hoy = Object.assign(vacio(HOY), clone(rHoy)); hydrate(); }
+        else if (editado) queueRemote();
+      } else if (rHoy && !saving && !dirty && (rHoy.actualizado || 0) > (hoy.actualizado || 0)) {
+        hoy = Object.assign(vacio(HOY), clone(rHoy)); hydrate();
+      }
+      dias = {}; Object.keys(remotos).forEach(f => { dias[f] = remotos[f]; }); dias[HOY] = hoy;
+      setSync('Guardado en línea · Daniel también ve tu informe 💗', true); renderInforme(); paintHug();
+    }, () => { clearTimeout(timer); db = null; setSync('No pude conectar el diario en línea; se guarda en este teléfono.'); });
+    db.collection('mensajes').onSnapshot(snap => {
+      mensajes = {}; snap.docs.forEach(x => { mensajes[x.id] = x.data(); }); renderInforme();
+      const om = $('owner-msg'); if (mensajes[HOY] && document.activeElement !== om && !om.value) om.value = mensajes[HOY].texto || '';
+    }, () => {});
+    db.doc('vales/canjes').onSnapshot(s => { if (s.exists) { valesUsados = { ...valesUsados, ...s.data() }; paintVales(); renderInforme(); } }, () => {});
+    try {
+      const u = await window.claude.use('user');
+      if (u && await u.isOwner()) {
+        $('owner').hidden = false;
+        $('owner-save').addEventListener('click', async () => {
+          const t = $('owner-msg').value.trim().slice(0, 400);
+          try { await db.doc('mensajes/' + HOY).set({ texto: t, actualizado: Date.now() }); $('owner-saved').textContent = 'Enviado ✓ Ashley lo verá en su informe.'; }
+          catch { $('owner-saved').textContent = 'No se pudo enviar. Prueba otra vez en un momento.'; }
+        });
+      }
+    } catch {}
+  })();
+
+  /* ================= Carta ================= */
+  const carta = `Mi Ashley hermosa:
+
+Sé que estos días no son fáciles. Te duele, no puedes comer lo que quieres y hasta hablas un poquito raro… y aun así sigues siendo la persona más bonita que conozco, mi amur.
+
+Mi niña, fuiste muy valiente al hacerte este tratamiento y me llenas de orgullo.
+
+Prometo cuidarte, traerte helado, hacerte reír (despacito, para que no duela) y estar contigo en cada día de la recuperación.
+
+Muy pronto vas a sonreír sin molestias, y esa sonrisa va a ser todavía más linda.
+
+Te amo muchísimo, amoricto. 💗
+
+Tuyo siempre,
+Daniel`;
+  const env = $('env'), letter = $('letter');
+  let typed = false;
+  env.addEventListener('click', () => {
+    env.classList.add('open'); spawn(...center(env), 30, 1.2);
+    if (typed) return; typed = true;
+    setTimeout(() => {
+      letter.hidden = false; letter.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      if (reduce) { letter.textContent = carta; return; }
+      let i = 0; const caret = '<span class="caret"></span>';
+      const step = () => { i += 2; letter.innerHTML = esc(carta.slice(0, i)) + (i < carta.length ? caret : ''); if (i < carta.length) setTimeout(step, 28); else rain(50); };
+      step();
+    }, 500);
+  });
+
   setTimeout(() => rain(35), 400);
 })();
 </script>
