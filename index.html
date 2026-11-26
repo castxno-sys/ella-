@@ -38,9 +38,8 @@
     overflow-x: hidden;
   }
   /* Medusas que flotan de fondo */
-  .jellies { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-  .jelly { position: absolute; bottom: -140px; animation: swim linear infinite; }
-  @keyframes swim { to { transform: translateY(calc(-100vh - 280px)); } }
+  .jellies { position: fixed; inset: 0; pointer-events: none; z-index: 40; overflow: hidden; }
+  .jelly { position: absolute; left: 0; top: 0; will-change: transform; }
   .jelly svg { display: block; animation: pulse 2.6s ease-in-out infinite; transform-origin: 50% 25%; }
   @keyframes pulse { 50% { transform: scale(1.1, .88); } }
   .tent { transform-box: fill-box; transform-origin: 50% 0; animation: sway 2.6s ease-in-out infinite; }
@@ -471,8 +470,6 @@
     ['🎬', 'Noche de películas', 'Tú eliges todas las películas. Yo no me quejo ni una vez. Promesa.'],
     ['😴', 'Siesta abrazados', 'Mantita, silencio y tú encima de mí.'],
     ['💐', 'Flores sorpresa', 'Llegan cuando menos te lo esperes.'],
-    ['🌊', 'Cita al acuario', 'Vamos a ver medusas brillando en la oscuridad, de la mano.'],
-    ['🧸', 'Peluche de medusa', 'Una medusita suave para que te acompañe mientras sanas.'],
     ['🗺️', 'Cita cuando sanes', 'A comer eso crujiente que extrañas. Yo invito.']
   ];
   const used = store.get('vales2', {});
@@ -570,14 +567,12 @@ Daniel`;
 
   // Medusas de fondo
   const JC = [['#ffb3c8', '#f78fb0'], ['#b9ecdc', '#7ad9bd'], ['#d9c8ff', '#b49cf2'], ['#bfe3ff', '#86c5f2']];
-  const jbox = document.getElementById('jellies');
+  const jbox = document.getElementById('jellies'), jellies = [];
   for (let i = 0; i < 7; i++) {
     const [f, s] = JC[i % JC.length], size = 38 + Math.random() * 44, d = 18 + Math.random() * 16;
     const j = document.createElement('div'); j.className = 'jelly';
-    j.style.left = (i / 7 * 100 + Math.random() * 8) + '%';
-    j.style.width = size + 'px'; j.style.opacity = .55 + Math.random() * .3;
-    if (reduce) { j.style.bottom = 'auto'; j.style.top = (10 + Math.random() * 75) + '%'; }
-    else { j.style.animationDuration = d + 's'; j.style.animationDelay = (-Math.random() * d) + 's'; }
+    j.style.width = size + 'px'; j.style.opacity = .6 + Math.random() * .25;
+    jellies.push({ el: j, x: Math.random() * (innerWidth - size), y: Math.random() * innerHeight, sp: .25 + Math.random() * .45, ph: Math.random() * 6.28, amp: .6 + Math.random(), size, pushX: 0, pushY: 0 });
     j.innerHTML = `<svg viewBox="0 0 60 100"><path d="M4 32 C4 6 56 6 56 32 Q51 37 46 32 Q41 37 35 32 Q30 37 25 32 Q19 37 14 32 Q9 37 4 32Z" fill="${f}" stroke="${s}" stroke-width="2"/>
       <ellipse cx="22" cy="20" rx="5" ry="3" fill="#fff" opacity=".7"/>
       <circle cx="24" cy="26" r="2" fill="#4a1630"/><circle cx="36" cy="26" r="2" fill="#4a1630"/>
@@ -586,6 +581,31 @@ Daniel`;
         <path d="M35 36 q-5 14 0 28 q5 12 0 22"/><path d="M46 36 q5 12 0 24 q-5 10 0 20"/></g></svg>`;
     jbox.appendChild(j);
   }
+  // Nadan por toda la pantalla, reaccionan al scroll y se apartan del dedo/mouse
+  let lastSY = scrollY, mx = -999, my = -999;
+  addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+  addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') mx = my = -999; });
+  function swimLoop(t) {
+    const dS = scrollY - lastSY; lastSY = scrollY;
+    const W2 = innerWidth, H2 = innerHeight;
+    for (const q of jellies) {
+      const tt = t / 1000 + q.ph;
+      q.y -= q.sp + Math.max(Math.sin(tt * 2.4), 0) * q.sp * 1.6;
+      q.y -= dS * (.25 + q.sp * .6);
+      q.x += Math.sin(tt * .5) * q.amp * .6;
+      const dx = q.x + q.size / 2 - mx, dy = q.y + q.size * .6 - my, dd = Math.hypot(dx, dy) || 1;
+      if (dd < 130) { q.pushX += dx / dd * 1.2; q.pushY += dy / dd * 1.2; }
+      q.pushX *= .94; q.pushY *= .94; q.x += q.pushX; q.y += q.pushY;
+      const m = q.size * 2;
+      if (q.y < -m) { q.y = H2 + 10; q.x = Math.random() * (W2 - q.size); }
+      if (q.y > H2 + m) { q.y = -m + 10; q.x = Math.random() * (W2 - q.size); }
+      if (q.x < -q.size) q.x = W2; if (q.x > W2) q.x = -q.size;
+      q.el.style.transform = `translate(${q.x}px, ${q.y}px) rotate(${Math.cos(tt * .5) * 12 + q.pushX * 3}deg)`;
+    }
+    requestAnimationFrame(swimLoop);
+  }
+  if (reduce) jellies.forEach(q => q.el.style.transform = `translate(${q.x}px, ${q.y}px)`);
+  else requestAnimationFrame(swimLoop);
 
   // Apodos que van cambiando
   const apodos = ['mi amur', 'amoricto', 'mi niña', 'Ash'], apEl = document.getElementById('apodo');
