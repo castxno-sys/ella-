@@ -458,7 +458,7 @@
   <section class="panel">
     <span class="eyebrow">Estación 8 · Juego</span>
     <h2>Salta, dientito</h2>
-    <p class="lead">Ayuda al dientito a subir saltando de base en base. Las bases con resorte te lanzan altísimo, las azules se mueven y las de galleta se rompen después de un salto. Mantén el dedo en la pantalla y el dientito se mueve hacia donde lo pongas. Atrapa corazones para ganar puntos extra.</p>
+    <p class="lead">Ayuda al dientito a subir saltando de base en base. Las bases con resorte te lanzan altísimo, las azules se mueven y las de galleta se rompen después de un salto. Mantén el dedo en la pantalla y el dientito se mueve hacia donde lo pongas, o inclina el celular hacia un lado o al otro. Atrapa corazones para ganar puntos extra.</p>
     <div class="jump" id="jump">
       <canvas id="jump-canvas" aria-label="Juego Salta, dientito"></canvas>
       <div class="hud"><span>Altura: <b id="j-score">0</b></span><span>Récord de hoy: <b id="j-best">0</b></span><button class="hud-x" id="j-x" aria-label="Salir del juego">✕</button></div>
@@ -675,6 +675,8 @@
     }
   }
   function activarMovimiento() { addEventListener('deviceorientation', onTilt); addEventListener('devicemotion', onShake); }
+  // Escuchar siempre: Android manda los datos sin pedir nada; en iPhone llegan cuando se da el permiso
+  activarMovimiento();
   if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
     // iPhone: el aviso de permiso sale solo con el primer toque en cualquier parte de la página
     let pidiendo = false;
@@ -684,13 +686,12 @@
       try {
         const r = await DeviceOrientationEvent.requestPermission();
         if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') { try { await DeviceMotionEvent.requestPermission(); } catch {} }
-        quitar();
-        if (r === 'granted') activarMovimiento();
+        if (r === 'granted' || r === 'denied') quitar();
       } catch { /* si no se pudo pedir con este toque, se vuelve a intentar con el siguiente */ }
       pidiendo = false;
     };
     document.addEventListener('touchend', pedir, true); document.addEventListener('click', pedir, true);
-  } else activarMovimiento();
+  }
   function swimLoop(t) {
     const dS = scrollY - lastSY; lastSY = scrollY;
     const W2 = innerWidth, H2 = innerHeight;
@@ -1001,6 +1002,7 @@
   function jUpdate(dt) {
     let target = 0;
     if (jPointer != null) { const dx = jPointer - (jp.x + PW / 2); target = Math.max(-1, Math.min(1, dx / 50)); }
+    if (jPointer == null && Math.abs(tiltX) > .08) target = Math.max(-1, Math.min(1, tiltX * 1.4));
     if (jKeys.l) target = -1; if (jKeys.r) target = 1;
     jp.vx += (target * 7 - jp.vx) * Math.min(.25 * dt, 1);
     jp.x += jp.vx * dt;
