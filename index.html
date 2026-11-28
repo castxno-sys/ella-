@@ -241,6 +241,7 @@
   .jump canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
   .jump .hud { color: var(--berry); }
   .jump .game-center p { color: var(--berry); }
+  .jump.run { height: 340px; }
 
   /* ---------- Vales ---------- */
   .coupons { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
@@ -464,9 +465,21 @@
     </div>
   </section>
 
+  <!-- JUEGO 3 -->
+  <section class="panel">
+    <span class="eyebrow">Estación 9 · Juego</span>
+    <h2>Corre, dientito</h2>
+    <p class="lead">El dientito salió a correr y en el camino hay dulces que le hacen daño. Toca la pantalla para saltar (si dejas el dedo apretado, salta más alto) y esquiva caramelos, chupetas y chicles. Ojo con el algodón de azúcar que flota: a veces es mejor no saltar. Atrapa los cepillitos para ganar puntos extra.</p>
+    <div class="jump run" id="run">
+      <canvas id="run-canvas" aria-label="Juego Corre, dientito"></canvas>
+      <div class="hud"><span>Puntos: <b id="rn-score">0</b></span><span>Récord de hoy: <b id="rn-best">0</b></span><button class="hud-x" id="rn-x" aria-label="Salir del juego">✕</button></div>
+      <div class="game-center" id="rn-center"><p id="rn-text">¿Lista para correr, amoricto?</p><div class="row"><button class="cta" id="rn-start">Empezar</button><button class="cta mint" id="rn-exit" hidden>Salir</button></div></div>
+    </div>
+  </section>
+
   <!-- VALES -->
   <section class="panel">
-    <span class="eyebrow">Estación 9 · Vales de mimos</span>
+    <span class="eyebrow">Estación 10 · Vales de mimos</span>
     <h2>Vales de Daniel, sin fecha de vencimiento</h2>
     <p class="lead">Voltea cada vale para ver tu premio. Cuando lo quieras, aprieta "Canjear" y yo cumplo.</p>
     <div class="coupons" id="coupons"></div>
@@ -474,7 +487,7 @@
 
   <!-- NOTA -->
   <section class="panel">
-    <span class="eyebrow">Estación 10 · Tu nota del día</span>
+    <span class="eyebrow">Estación 11 · Tu nota del día</span>
     <h2>Cuéntale a Daniel cómo te fue</h2>
     <p class="lead" id="nota-lead">Lo que escribas aquí aparece en tu informe de hoy.</p>
     <label for="nota" class="hint">Tu nota</label>
@@ -484,7 +497,7 @@
 
   <!-- CARTA -->
   <section class="panel">
-    <span class="eyebrow">Estación 11 · Correo para ti</span>
+    <span class="eyebrow">Estación 12 · Correo para ti</span>
     <h2>Tienes una carta de Daniel</h2>
     <button class="env-btn" id="env" aria-label="Abrir la carta">
       <svg viewBox="0 0 300 190" aria-hidden="true">
@@ -517,7 +530,7 @@
   /* ================= Diario (guardado diario) ================= */
   const HOY = new Date().toLocaleDateString('en-CA');
   const INICIO = '2026-11-24'; // día 1 de recuperación (día de la cirugía)
-  const vacio = f => ({ fecha: f, dolor: null, animo: null, checks: {}, agua: 0, abrazos: 0, juego: 0, salto: 0, razones: 0, nota: '' });
+  const vacio = f => ({ fecha: f, dolor: null, animo: null, checks: {}, agua: 0, abrazos: 0, juego: 0, salto: 0, corre: 0, razones: 0, nota: '' });
   const TAREAS = [
     'Comí algo blandito y fresquito', 'Tomé mis medicinas a la hora', 'Me puse hielito por fuera de la cara',
     'Hice mis enjuagues como dijo la doctora', 'Cepillé con muchísimo cuidado', 'Tomé suficiente agua',
@@ -1107,6 +1120,183 @@
   addEventListener('resize', () => { if (jOn) jSize(); else if (jp) { jReset(); jDraw(); } });
   jReset(); jDraw();
 
+  /* ================= Juego 3: Corre, dientito ================= */
+  const runBox = $('run'), rc = $('run-canvas'), rx = rc.getContext('2d'), rnCenter = $('rn-center');
+  let RW = 0, RH = 0, rnOn = false, rnRaf = 0, rnLast = 0, rp, obs, brushes, rnSpeed, rnDist, rnBonus, rnShown = -1, rnHold = false, rnNext = 0, rnT = 0;
+  function paintBestR() { $('rn-best').textContent = hoy.corre || 0; }
+  function rnSize() {
+    const r = runBox.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+    RW = Math.max(r.width, 200); RH = Math.max(r.height, 240);
+    rc.width = RW * dpr; rc.height = RH * dpr; rx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  const suelo = () => RH - 56;
+  function rnReset() {
+    rnSize();
+    rp = { x: Math.min(80, RW * .16), y: suelo() - PH, vy: 0, ground: true, squash: 0 };
+    obs = []; brushes = []; rnSpeed = 5.5; rnDist = 0; rnBonus = 0; rnShown = -1; rnNext = 200; rnT = 0;
+  }
+  const TIPOS = [
+    { k: 'caramelo', w: 38, h: 24 },
+    { k: 'chupeta', w: 24, h: 52 },
+    { k: 'chicle', w: 36, h: 30 },
+    { k: 'doble', w: 66, h: 24 },
+    { k: 'algodon', w: 46, h: 30, fly: true }
+  ];
+  function rnSpawn() {
+    const pool = rnDist < 2500 ? TIPOS.slice(0, 3) : TIPOS;
+    const o = { ...pool[Math.random() * pool.length | 0] };
+    o.x = RW + 20;
+    o.y = o.fly ? (Math.random() < .5 ? suelo() - 74 - o.h : suelo() - 22 - o.h) : suelo() - o.h;
+    obs.push(o);
+    if (Math.random() < .22) brushes.push({ x: RW + 140 + Math.random() * 80, y: suelo() - 100 - Math.random() * 25, taken: false });
+  }
+  function saltar() {
+    if (!rnOn) return;
+    if (rp.ground) { rp.vy = -10.5; rp.ground = false; rp.squash = .6; }
+  }
+  function rnUpdate(dt) {
+    rnT += dt;
+    rnSpeed = Math.min(5.5 + rnDist / 1800, 13);
+    const mv = rnSpeed * dt;
+    rnDist += mv;
+    const g = rnHold && rp.vy < 0 ? .38 : .75;
+    rp.vy += g * dt; rp.y += rp.vy * dt;
+    if (rp.y >= suelo() - PH) { if (!rp.ground) rp.squash = 1; rp.y = suelo() - PH; rp.vy = 0; rp.ground = true; }
+    rp.squash = Math.max(0, rp.squash - .08 * dt);
+    obs.forEach(o => { o.x -= mv; }); brushes.forEach(b => { b.x -= mv; });
+    obs = obs.filter(o => o.x + o.w > -20); brushes = brushes.filter(b => !b.taken && b.x > -30);
+    rnNext -= mv;
+    if (rnNext <= 0) { rnSpawn(); rnNext = (230 + Math.random() * 260) * Math.sqrt(rnSpeed / 5.5); }
+    const px = rp.x + 7, py = rp.y + 6, pw = PW - 14, ph = PH - 8;
+    for (const o of obs) {
+      if (px < o.x + o.w - 4 && px + pw > o.x + 4 && py < o.y + o.h - 3 && py + ph > o.y + 3) { rnEnd(); return; }
+    }
+    for (const b of brushes) {
+      if (!b.taken && Math.abs(b.x - (rp.x + PW / 2)) < 26 && Math.abs(b.y - (rp.y + PH / 2)) < 30) {
+        b.taken = true; rnBonus += 15;
+        const r = rc.getBoundingClientRect(); spawn(r.left + b.x, r.top + b.y, 12, .9);
+      }
+    }
+    const total = Math.floor(rnDist / 25) + rnBonus;
+    if (total !== rnShown) { rnShown = total; $('rn-score').textContent = total; }
+  }
+  function caramelo(x, y, w, h) {
+    const cxm = x + w / 2, cym = y + h / 2;
+    rx.fillStyle = '#ff8fb3';
+    rx.beginPath(); rx.moveTo(x, y + 2); rx.lineTo(x + 10, cym); rx.lineTo(x, y + h - 2); rx.closePath(); rx.fill();
+    rx.beginPath(); rx.moveTo(x + w, y + 2); rx.lineTo(x + w - 10, cym); rx.lineTo(x + w, y + h - 2); rx.closePath(); rx.fill();
+    rx.fillStyle = '#d6336c'; rx.beginPath(); rx.ellipse(cxm, cym, w / 2 - 8, h / 2, 0, 0, 7); rx.fill();
+    rx.strokeStyle = 'rgba(255,255,255,.8)'; rx.lineWidth = 3;
+    rx.beginPath(); rx.moveTo(cxm - 6, y + 3); rx.lineTo(cxm - 1, y + h - 3); rx.moveTo(cxm + 4, y + 3); rx.lineTo(cxm + 9, y + h - 3); rx.stroke();
+  }
+  function rnDrawObs(o) {
+    if (o.k === 'caramelo') caramelo(o.x, o.y, o.w, o.h);
+    else if (o.k === 'doble') { caramelo(o.x, o.y, 34, o.h); caramelo(o.x + 32, o.y, 34, o.h); }
+    else if (o.k === 'chupeta') {
+      rx.fillStyle = '#fff'; rx.strokeStyle = '#f1c3d3'; rx.lineWidth = 2;
+      rx.fillRect(o.x + o.w / 2 - 2.5, o.y + 20, 5, o.h - 20); rx.strokeRect(o.x + o.w / 2 - 2.5, o.y + 20, 5, o.h - 20);
+      rx.fillStyle = '#ffd166'; rx.beginPath(); rx.arc(o.x + o.w / 2, o.y + 12, 12, 0, 7); rx.fill();
+      rx.strokeStyle = '#d6336c'; rx.lineWidth = 3; rx.beginPath();
+      for (let a = 0; a < 12; a += .3) { const rr2 = a * .95; rx.lineTo(o.x + o.w / 2 + Math.cos(a) * rr2, o.y + 12 + Math.sin(a) * rr2); }
+      rx.stroke();
+    } else if (o.k === 'chicle') {
+      rx.fillStyle = '#ff6b9a'; rx.beginPath(); rx.ellipse(o.x + o.w / 2, o.y + o.h - 9, o.w / 2, 9, 0, 0, 7); rx.fill();
+      rx.fillStyle = 'rgba(255,143,179,.85)'; rx.beginPath(); rx.arc(o.x + o.w / 2 + 4, o.y + 12, 12, 0, 7); rx.fill();
+      rx.fillStyle = 'rgba(255,255,255,.7)'; rx.beginPath(); rx.arc(o.x + o.w / 2, o.y + 8, 3.5, 0, 7); rx.fill();
+    } else if (o.k === 'algodon') {
+      rx.fillStyle = '#d9c8ff';
+      rx.beginPath(); rx.arc(o.x + 12, o.y + 17, 12, 0, 7); rx.arc(o.x + 24, o.y + 11, 14, 0, 7); rx.arc(o.x + 36, o.y + 17, 11, 0, 7); rx.fill();
+      rx.fillStyle = '#ffb3c8'; rx.beginPath(); rx.arc(o.x + 22, o.y + 20, 10, 0, 7); rx.fill();
+    }
+  }
+  function cepillo(x, y) {
+    rx.save(); rx.translate(x, y + Math.sin(rnT / 8 + x) * 3); rx.rotate(-.35);
+    rx.fillStyle = '#7ad9bd'; rr2(-18, -3, 30, 6, 3); rx.fill();
+    rx.fillStyle = '#fff'; rr2(10, -5, 12, 8, 2); rx.fill();
+    rx.fillStyle = '#86c5f2'; for (let i = 0; i < 4; i++) rx.fillRect(11 + i * 3, -11, 2, 6);
+    rx.restore();
+  }
+  function rr2(x, y, w, h, r) {
+    rx.beginPath(); rx.moveTo(x + r, y); rx.arcTo(x + w, y, x + w, y + h, r); rx.arcTo(x + w, y + h, x, y + h, r);
+    rx.arcTo(x, y + h, x, y, r); rx.arcTo(x, y, x + w, y, r); rx.closePath();
+  }
+  function rnDraw(dead) {
+    const g = rx.createLinearGradient(0, 0, 0, RH); g.addColorStop(0, '#ffe1ea'); g.addColorStop(1, '#fff6f9');
+    rx.fillStyle = g; rx.fillRect(0, 0, RW, RH);
+    rx.fillStyle = 'rgba(255,255,255,.85)';
+    for (let i = 0; i < 4; i++) {
+      const span = RW + 160, cxp = ((i * 260 - rnDist * .15) % span + span) % span - 80, cyp = 50 + (i % 2) * 40;
+      rx.beginPath(); rx.arc(cxp, cyp, 16, 0, 7); rx.arc(cxp + 18, cyp - 8, 20, 0, 7); rx.arc(cxp + 38, cyp, 14, 0, 7); rx.fill();
+    }
+    rx.fillStyle = '#ffd0de';
+    for (let i = 0; i < 5; i++) {
+      const span = RW + 300, hx = ((i * 210 - rnDist * .35) % span + span) % span - 150;
+      rx.beginPath(); rx.ellipse(hx, suelo() + 6, 110, 46, 0, Math.PI, 0); rx.fill();
+    }
+    rx.fillStyle = '#f78fb0'; rx.fillRect(0, suelo(), RW, RH - suelo());
+    rx.fillStyle = '#fbb8cd';
+    const off = rnDist % 40;
+    for (let x = -off; x < RW; x += 40) { rr2(x, suelo() + 14, 18, 5, 2.5); rx.fill(); }
+    for (const b of brushes) if (!b.taken) cepillo(b.x, b.y);
+    for (const o of obs) rnDrawObs(o);
+    const sq = rp.squash;
+    rx.save();
+    rx.translate(rp.x + PW / 2, rp.y + PH); rx.scale(1 + .16 * sq, 1 - .2 * sq);
+    if (rp.ground && !dead) {
+      const step = Math.sin(rnT * .5) * 4;
+      rx.fillStyle = '#f1c3d3';
+      rx.beginPath(); rx.ellipse(-7 + step, 1, 6, 3.5, 0, 0, 7); rx.fill();
+      rx.beginPath(); rx.ellipse(7 - step, 1, 6, 3.5, 0, 0, 7); rx.fill();
+    }
+    rx.translate(-PW / 2, -PH - (rp.ground && !dead ? Math.abs(Math.sin(rnT * .5)) * 2 : 0));
+    rx.scale(.3, .3); rx.translate(-48, -12);
+    rx.fillStyle = '#fff'; rx.strokeStyle = '#f1c3d3'; rx.lineWidth = 8; rx.fill(TOOTH); rx.stroke(TOOTH);
+    rx.fillStyle = '#4a1630';
+    if (dead) {
+      rx.strokeStyle = '#4a1630'; rx.lineWidth = 6; rx.lineCap = 'round'; rx.beginPath();
+      [[88, 84], [132, 84]].forEach(([ex, ey]) => { rx.moveTo(ex - 8, ey - 8); rx.lineTo(ex + 8, ey + 8); rx.moveTo(ex + 8, ey - 8); rx.lineTo(ex - 8, ey + 8); });
+      rx.stroke();
+    } else {
+      rx.beginPath(); rx.ellipse(92, 84, 7, 10, 0, 0, 7); rx.fill();
+      rx.beginPath(); rx.ellipse(136, 84, 7, 10, 0, 0, 7); rx.fill();
+    }
+    rx.fillStyle = '#ffb3c8';
+    rx.beginPath(); rx.ellipse(74, 104, 10, 6, 0, 0, 7); rx.fill();
+    rx.beginPath(); rx.ellipse(146, 104, 10, 6, 0, 0, 7); rx.fill();
+    rx.strokeStyle = '#4a1630'; rx.lineWidth = 5; rx.lineCap = 'round';
+    rx.beginPath(); rx.moveTo(100, dead ? 114 : 106); rx.quadraticCurveTo(112, dead ? 104 : (rp.ground ? 118 : 124), 124, dead ? 114 : 106); rx.stroke();
+    rx.restore();
+  }
+  function rnLoop(t) {
+    if (!rnOn) return;
+    const dt = rnLast ? Math.min((t - rnLast) / 16.67, 2.5) : 1; rnLast = t;
+    rnUpdate(dt);
+    if (rnOn) { rnDraw(false); rnRaf = requestAnimationFrame(rnLoop); }
+  }
+  function rnStart() {
+    abrirFull(runBox); $('rn-exit').hidden = true; rnCenter.hidden = true;
+    requestAnimationFrame(() => { rnReset(); $('rn-score').textContent = 0; rnOn = true; rnLast = 0; rnRaf = requestAnimationFrame(rnLoop); });
+  }
+  function rnEnd() {
+    rnOn = false; cancelAnimationFrame(rnRaf); rnHold = false;
+    rnDraw(true);
+    const r = rc.getBoundingClientRect(); spawn(r.left + rp.x + PW / 2, r.top + rp.y + PH / 2, 16, 1);
+    const total = Math.floor(rnDist / 25) + rnBonus, record = total > (hoy.corre || 0);
+    $('rn-score').textContent = total;
+    if (record) { hoy.corre = total; guardar(); paintBestR(); rain(50); }
+    $('rn-text').textContent = record ? `¡Nuevo récord de hoy! ${total} puntos 🏆` : total < 20 ? 'Ay, un dulce atrapó al dientito 🍬 ¿Otra vez?' : `${total} puntos. ¡Muy bien, mi amur!`;
+    $('rn-start').textContent = 'Jugar otra vez'; $('rn-exit').hidden = false; rnCenter.hidden = false;
+  }
+  $('rn-start').addEventListener('click', rnStart);
+  $('rn-exit').addEventListener('click', () => { cerrarFull(runBox); $('rn-exit').hidden = true; requestAnimationFrame(() => { if (!rnOn) { rnReset(); rnDraw(false); } }); });
+  $('rn-x').addEventListener('click', () => { if (rnOn) rnEnd(); cerrarFull(runBox); $('rn-exit').hidden = true; requestAnimationFrame(() => { rnReset(); rnDraw(false); }); });
+  rc.addEventListener('pointerdown', e => { e.preventDefault(); rnHold = true; saltar(); try { rc.setPointerCapture(e.pointerId); } catch {} });
+  ['pointerup', 'pointercancel'].forEach(v => rc.addEventListener(v, () => { rnHold = false; }));
+  addEventListener('keydown', e => { if (!rnOn) return; if (e.key === ' ' || e.key === 'ArrowUp') { e.preventDefault(); if (!e.repeat) { rnHold = true; saltar(); } } });
+  addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'ArrowUp') rnHold = false; });
+  addEventListener('resize', () => { if (rnOn) { rnSize(); } else if (rp) { rnReset(); rnDraw(false); } });
+  rnReset(); rnDraw(false);
+
   /* ================= Vales ================= */
   const vales = [
     ['🍦', 'Helado a domicilio', 'Del sabor que quieras, frío y suavecito, como manda la doctora.'],
@@ -1144,7 +1334,7 @@
   /* ================= Informe ================= */
   const fmtFecha = (f, opts = { weekday: 'long', day: 'numeric', month: 'long' }) => new Date(f + 'T12:00:00').toLocaleDateString('es', opts);
   const diffDias = (a, b) => Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / 864e5);
-  const tieneDatos = d => d && (d.dolor != null || d.animo != null || nChecks(d) || d.agua || d.abrazos || d.juego || d.salto || d.razones || d.nota);
+  const tieneDatos = d => d && (d.dolor != null || d.animo != null || nChecks(d) || d.agua || d.abrazos || d.juego || d.salto || d.corre || d.razones || d.nota);
   function renderInforme() {
     const fechas = Object.keys(dias).filter(f => f === HOY || tieneDatos(dias[f])).sort();
     const inicio = INICIO;
@@ -1164,6 +1354,7 @@
       ['Abrazos', hoy.abrazos, `${totalAbrazos()} en total`],
       ['Medusas', hoy.juego || 0, 'récord de hoy'],
       ['Saltos', hoy.salto || 0, 'récord de altura'],
+      ['Carrera', hoy.corre || 0, 'récord corriendo'],
       ['Razones', hoy.razones, 'papelitos leídos'],
       ['Vales', canjeHoy.length, canjeHoy.length ? canjeHoy.join(', ') : 'canjeados hoy']
     ];
@@ -1194,6 +1385,7 @@
       bits.push(`misiones ${nChecks(d)}/${TAREAS.length}`, `agua ${d.agua || 0}/8`, `${d.abrazos || 0} abrazos`);
       if (d.juego) bits.push(`${d.juego} medusas`);
       if (d.salto) bits.push(`altura ${d.salto} saltando`);
+      if (d.corre) bits.push(`${d.corre} puntos corriendo`);
       const msg = mensajes[f] && mensajes[f].texto ? `<i>Daniel: ${esc(mensajes[f].texto)}</i>` : '';
       return `<li><b>Día ${diffDias(inicio, f) + 1} · ${esc(fmtFecha(f, { weekday: 'short', day: 'numeric', month: 'short' }))}</b><div class="det">${esc(bits.join(' · '))}${d.nota ? `<i>“${esc(d.nota)}”</i>` : ''}${msg}</div></li>`;
     }).join('');
@@ -1205,7 +1397,7 @@
     const hechas = TAREAS.filter((_, i) => hoy.checks[i]);
     l.push(`Misiones: ${hechas.length}/${TAREAS.length}`);
     hechas.forEach(t => l.push(`  ✅ ${t}`));
-    l.push(`Agua: ${hoy.agua}/8 vasitos`, `Abrazos: ${hoy.abrazos}`, `Medusas atrapadas (récord): ${hoy.juego || 0}`, `Salta, dientito (récord): ${hoy.salto || 0}`);
+    l.push(`Agua: ${hoy.agua}/8 vasitos`, `Abrazos: ${hoy.abrazos}`, `Medusas atrapadas (récord): ${hoy.juego || 0}`, `Salta, dientito (récord): ${hoy.salto || 0}`, `Corre, dientito (récord): ${hoy.corre || 0}`);
     if (canjeHoy.length) l.push(`Vales canjeados: ${canjeHoy.join(', ')}`);
     if (hoy.nota) l.push('', `Mi nota: "${hoy.nota}"`);
     const cmp = $('r-compare').textContent; if (cmp && hoy.dolor != null) l.push('', cmp);
@@ -1228,7 +1420,7 @@
   /* ================= Pintar todo desde "hoy" ================= */
   function hydrate() {
     if (hoy.dolor != null) pain.value = hoy.dolor;
-    paintPain(); paintMood(); paintChecks(false); paintAgua(); paintHug(); paintBest(); paintBestJ(); paintVales();
+    paintPain(); paintMood(); paintChecks(false); paintAgua(); paintHug(); paintBest(); paintBestJ(); paintBestR(); paintVales();
     if (document.activeElement !== nota) nota.value = hoy.nota || '';
     renderInforme();
   }
