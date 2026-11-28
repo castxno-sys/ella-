@@ -242,6 +242,7 @@
   .jump .hud { color: var(--berry); }
   .jump .game-center p { color: var(--berry); }
   .jump.run { height: 340px; }
+  .jump.run.noche .game-center p { color: #fff6d6; }
 
   /* ---------- Vales ---------- */
   .coupons { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
@@ -1122,7 +1123,7 @@
 
   /* ================= Juego 3: Corre, dientito ================= */
   const runBox = $('run'), rc = $('run-canvas'), rx = rc.getContext('2d'), rnCenter = $('rn-center');
-  let RW = 0, RH = 0, rnOn = false, rnRaf = 0, rnLast = 0, rp, obs, brushes, rnSpeed, rnDist, rnBonus, rnShown = -1, rnHold = false, rnNext = 0, rnT = 0;
+  let RW = 0, RH = 0, rnOn = false, rnRaf = 0, rnLast = 0, rp, obs, brushes, rnSpeed, rnDist, rnBonus, rnShown = -1, rnHold = false, rnNext = 0, rnT = 0, rnNoche = false;
   function paintBestR() { $('rn-best').textContent = hoy.corre || 0; }
   function rnSize() {
     const r = runBox.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
@@ -1133,7 +1134,7 @@
   function rnReset() {
     rnSize();
     rp = { x: Math.min(80, RW * .16), y: suelo() - PH, vy: 0, ground: true, squash: 0 };
-    obs = []; brushes = []; rnSpeed = 5.5; rnDist = 0; rnBonus = 0; rnShown = -1; rnNext = 200; rnT = 0;
+    obs = []; brushes = []; rnSpeed = 5.5; rnDist = 0; rnBonus = 0; rnShown = -1; rnNext = 200; rnT = 0; rnNoche = false;
   }
   const TIPOS = [
     { k: 'caramelo', w: 38, h: 24 },
@@ -1220,21 +1221,48 @@
     rx.beginPath(); rx.moveTo(x + r, y); rx.arcTo(x + w, y, x + w, y + h, r); rx.arcTo(x + w, y + h, x, y + h, r);
     rx.arcTo(x, y + h, x, y, r); rx.arcTo(x, y, x + w, y, r); rx.closePath();
   }
+  function mezcla(a, b, t) {
+    const pa = [1, 3, 5].map(i => parseInt(a.slice(i, i + 2), 16)), pb = [1, 3, 5].map(i => parseInt(b.slice(i, i + 2), 16));
+    return `rgb(${pa.map((v, i) => Math.round(v + (pb[i] - v) * t)).join(',')})`;
+  }
   function rnDraw(dead) {
-    const g = rx.createLinearGradient(0, 0, 0, RH); g.addColorStop(0, '#ffe1ea'); g.addColorStop(1, '#fff6f9');
+    // De noche después de 400 puntos (transición suave en 60 puntos)
+    const pts = Math.floor(rnDist / 25) + rnBonus, n = Math.max(0, Math.min(1, (pts - 400) / 60));
+    if (pts >= 400 && !rnNoche && rnOn) {
+      rnNoche = true; const r = rc.getBoundingClientRect();
+      for (let i = 0; i < 18; i++) setTimeout(() => spawn(r.left + Math.random() * RW, r.top + 40 + Math.random() * 120, 1, .5), i * 40);
+    }
+    const g = rx.createLinearGradient(0, 0, 0, RH); g.addColorStop(0, mezcla('#ffe1ea', '#1d1640', n)); g.addColorStop(1, mezcla('#fff6f9', '#4a2f63', n));
     rx.fillStyle = g; rx.fillRect(0, 0, RW, RH);
-    rx.fillStyle = 'rgba(255,255,255,.85)';
+    if (n > 0) {
+      for (let i = 0; i < 34; i++) {
+        const h1 = Math.sin(i * 12.9898) * 43758.5453, h2 = Math.sin(i * 78.233) * 12345.678;
+        const sx = (h1 - Math.floor(h1)) * RW, sy = 20 + (h2 - Math.floor(h2)) * Math.max(suelo() - 120, 60);
+        rx.globalAlpha = n * (.45 + .55 * Math.abs(Math.sin(rnT / 25 + i)));
+        rx.fillStyle = '#fff6d6'; rx.beginPath(); rx.arc(sx, sy, i % 5 ? 1.4 : 2.4, 0, 7); rx.fill();
+      }
+      rx.globalAlpha = n;
+      const mx2 = RW - 80, my2 = 110;
+      const glow = rx.createRadialGradient(mx2, my2, 10, mx2, my2, 70); glow.addColorStop(0, 'rgba(255,246,214,.5)'); glow.addColorStop(1, 'rgba(255,246,214,0)');
+      rx.fillStyle = glow; rx.beginPath(); rx.arc(mx2, my2, 70, 0, 7); rx.fill();
+      rx.fillStyle = '#fff6d6'; rx.beginPath(); rx.arc(mx2, my2, 26, 0, 7); rx.fill();
+      rx.fillStyle = 'rgba(214,190,150,.45)';
+      [[-8, -6, 5], [9, 7, 4], [6, -10, 3]].forEach(([dx, dy, r]) => { rx.beginPath(); rx.arc(mx2 + dx, my2 + dy, r, 0, 7); rx.fill(); });
+      rx.globalAlpha = 1;
+    }
+    runBox.classList.toggle('noche', n > .5);
+    rx.fillStyle = `rgba(255,255,255,${.85 - .65 * n})`;
     for (let i = 0; i < 4; i++) {
       const span = RW + 160, cxp = ((i * 260 - rnDist * .15) % span + span) % span - 80, cyp = 50 + (i % 2) * 40;
       rx.beginPath(); rx.arc(cxp, cyp, 16, 0, 7); rx.arc(cxp + 18, cyp - 8, 20, 0, 7); rx.arc(cxp + 38, cyp, 14, 0, 7); rx.fill();
     }
-    rx.fillStyle = '#ffd0de';
+    rx.fillStyle = mezcla('#ffd0de', '#3a2752', n);
     for (let i = 0; i < 5; i++) {
       const span = RW + 300, hx = ((i * 210 - rnDist * .35) % span + span) % span - 150;
       rx.beginPath(); rx.ellipse(hx, suelo() + 6, 110, 46, 0, Math.PI, 0); rx.fill();
     }
-    rx.fillStyle = '#f78fb0'; rx.fillRect(0, suelo(), RW, RH - suelo());
-    rx.fillStyle = '#fbb8cd';
+    rx.fillStyle = mezcla('#f78fb0', '#8a3f6a', n); rx.fillRect(0, suelo(), RW, RH - suelo());
+    rx.fillStyle = mezcla('#fbb8cd', '#b45f8c', n);
     const off = rnDist % 40;
     for (let x = -off; x < RW; x += 40) { rr2(x, suelo() + 14, 18, 5, 2.5); rx.fill(); }
     for (const b of brushes) if (!b.taken) cepillo(b.x, b.y);
