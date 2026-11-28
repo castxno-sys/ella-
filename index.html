@@ -458,7 +458,7 @@
   <section class="panel">
     <span class="eyebrow">Estación 8 · Juego</span>
     <h2>Salta, dientito</h2>
-    <p class="lead">Ayuda al dientito a subir saltando de base en base. Las bases con resorte te lanzan altísimo, las azules se mueven y las de galleta se rompen después de un salto. Mantén el dedo en la pantalla y el dientito se mueve hacia donde lo pongas, o inclina el celular hacia un lado o al otro. Atrapa corazones para ganar puntos extra.</p>
+    <p class="lead">Ayuda al dientito a subir saltando de base en base. Las bases con resorte te lanzan altísimo, las azules se mueven y las de galleta se rompen después de un salto. Mantén el dedo en el lado derecho o izquierdo de la pantalla para moverlo, o inclina el celular. Si sale por un lado, aparece por el otro. Atrapa corazones para ganar puntos extra.</p>
     <div class="jump" id="jump">
       <canvas id="jump-canvas" aria-label="Juego Salta, dientito"></canvas>
       <div class="hud"><span>Altura: <b id="j-score">0</b></span><span>Récord de hoy: <b id="j-best">0</b></span><button class="hud-x" id="j-x" aria-label="Salir del juego">✕</button></div>
@@ -658,15 +658,22 @@
     el.addEventListener('pointerup', soltar); el.addEventListener('pointercancel', soltar);
   });
   // Movimiento del teléfono: inclinar las empuja, sacudir las revuelve
-  let baseBeta = null, lastShake = 0;
+  let baseBeta = null, lastShake = 0, orientOk = false;
   function onTilt(e) {
     if (e.gamma == null || e.beta == null) return;
+    orientOk = true;
     if (baseBeta == null) baseBeta = e.beta;
     tiltX = Math.max(-1, Math.min(1, e.gamma / 25));
     tiltY = Math.max(-1, Math.min(1, (e.beta - baseBeta) / 25));
   }
   function onShake(e) {
-    const a = e.accelerationIncludingGravity || e.acceleration; if (!a) return;
+    const gi = e.accelerationIncludingGravity;
+    if (!orientOk && gi && gi.x != null) {
+      // Respaldo: inclinación calculada con el acelerómetro (iPhone y Android dan el signo al revés)
+      const sgn = /iPhone|iPad|iPod/.test(navigator.userAgent) ? 1 : -1;
+      tiltX = Math.max(-1, Math.min(1, sgn * gi.x / 4.5));
+    }
+    const a = gi || e.acceleration; if (!a) return;
     const m = Math.hypot(a.x || 0, a.y || 0, a.z || 0);
     if (m > 28 && performance.now() - lastShake > 900) {
       lastShake = performance.now();
@@ -1001,12 +1008,12 @@
   }
   function jUpdate(dt) {
     let target = 0;
-    if (jPointer != null) { const dx = jPointer - (jp.x + PW / 2); target = Math.max(-1, Math.min(1, dx / 50)); }
+    if (jPointer != null) target = jPointer > JW / 2 ? 1 : -1;
     if (jPointer == null && Math.abs(tiltX) > .08) target = Math.max(-1, Math.min(1, tiltX * 1.4));
     if (jKeys.l) target = -1; if (jKeys.r) target = 1;
     jp.vx += (target * 7 - jp.vx) * Math.min(.25 * dt, 1);
     jp.x += jp.vx * dt;
-    if (jp.x > JW) jp.x = -PW; if (jp.x < -PW) jp.x = JW;
+    if (jp.x >= JW) jp.x -= JW; if (jp.x + PW <= 0) jp.x += JW;
     const prevBottom = jp.y + PH;
     jp.vy += .38 * dt; jp.y += jp.vy * dt;
     const bottom = jp.y + PH;
@@ -1078,8 +1085,10 @@
     jx.globalAlpha = 1;
     for (const h of jHearts) { jx.fillStyle = '#d6336c'; jHeart(h.x, h.y - 9 + Math.sin(t / 300 + h.x) * 3, 18); }
     const sq = jp.squash;
+    // Si va saliendo por un lado, se dibuja también entrando por el otro
+    for (const off of [0, jp.x + PW > JW ? -JW : jp.x < 0 ? JW : null]) { if (off === null) continue;
     jx.save();
-    jx.translate(jp.x + PW / 2, jp.y + PH); jx.scale(1 + .18 * sq, 1 - .22 * sq); jx.translate(-PW / 2, -PH);
+    jx.translate(jp.x + off + PW / 2, jp.y + PH); jx.scale(1 + .18 * sq, 1 - .22 * sq); jx.translate(-PW / 2, -PH);
     jx.scale(.3, .3); jx.translate(-48, -12);
     jx.fillStyle = '#fff'; jx.strokeStyle = '#f1c3d3'; jx.lineWidth = 8; jx.fill(TOOTH); jx.stroke(TOOTH);
     const look = Math.max(-6, Math.min(6, jp.vx * 1.2));
@@ -1092,6 +1101,7 @@
     jx.strokeStyle = '#4a1630'; jx.lineWidth = 5; jx.lineCap = 'round';
     jx.beginPath(); jx.moveTo(98, 106); jx.quadraticCurveTo(110, jp.vy < -12 ? 126 : 118, 122, 106); jx.stroke();
     jx.restore();
+    }
     jx.restore();
   }
   function jLoop(t) {
