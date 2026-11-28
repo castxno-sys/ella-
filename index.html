@@ -691,8 +691,10 @@
     const pedir = async () => {
       if (pidiendo) return; pidiendo = true;
       try {
-        const r = await DeviceOrientationEvent.requestPermission();
-        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') { try { await DeviceMotionEvent.requestPermission(); } catch {} }
+        // En iPhone las dos peticiones tienen que salir en el mismo toque, sin esperar entre ellas
+        const pO = DeviceOrientationEvent.requestPermission();
+        const pM = (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') ? DeviceMotionEvent.requestPermission().catch(() => 'denied') : Promise.resolve('granted');
+        const [r] = await Promise.all([pO, pM]);
         if (r === 'granted' || r === 'denied') quitar();
       } catch { /* si no se pudo pedir con este toque, se vuelve a intentar con el siguiente */ }
       pidiendo = false;
