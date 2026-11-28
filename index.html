@@ -662,8 +662,8 @@
   function onTilt(e) {
     if (e.gamma == null || e.beta == null) return;
     if (baseBeta == null) baseBeta = e.beta;
-    tiltX = Math.max(-1, Math.min(1, e.gamma / 35));
-    tiltY = Math.max(-1, Math.min(1, (e.beta - baseBeta) / 35));
+    tiltX = Math.max(-1, Math.min(1, e.gamma / 25));
+    tiltY = Math.max(-1, Math.min(1, (e.beta - baseBeta) / 25));
   }
   function onShake(e) {
     const a = e.accelerationIncludingGravity || e.acceleration; if (!a) return;
@@ -677,15 +677,17 @@
   function activarMovimiento() { addEventListener('deviceorientation', onTilt); addEventListener('devicemotion', onShake); }
   if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
     // iPhone: el aviso de permiso sale solo con el primer toque en cualquier parte de la página
-    let pedido = false;
+    let pidiendo = false;
+    const quitar = () => { document.removeEventListener('touchend', pedir, true); document.removeEventListener('click', pedir, true); };
     const pedir = async () => {
-      if (pedido) return; pedido = true;
-      document.removeEventListener('touchend', pedir, true); document.removeEventListener('click', pedir, true);
+      if (pidiendo) return; pidiendo = true;
       try {
         const r = await DeviceOrientationEvent.requestPermission();
         if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') { try { await DeviceMotionEvent.requestPermission(); } catch {} }
+        quitar();
         if (r === 'granted') activarMovimiento();
-      } catch {}
+      } catch { /* si no se pudo pedir con este toque, se vuelve a intentar con el siguiente */ }
+      pidiendo = false;
     };
     document.addEventListener('touchend', pedir, true); document.addEventListener('click', pedir, true);
   } else activarMovimiento();
@@ -695,7 +697,7 @@
     for (const q of jellies) {
       const tt = t / 1000 + q.ph;
       if (q.drag) { q.el.style.transform = `translate(${q.x}px, ${q.y}px) rotate(${Math.max(-30, Math.min(30, q.dvx * 2))}deg) scale(1.15)`; continue; }
-      q.pushX += tiltX * .22; q.pushY += tiltY * .22;
+      q.pushX += tiltX * .4; q.pushY += tiltY * .4;
       q.y -= q.sp + Math.max(Math.sin(tt * 2.4), 0) * q.sp * 1.6;
       q.y -= dS * (.25 + q.sp * .6);
       q.x += Math.sin(tt * .5) * q.amp * .6;
@@ -706,7 +708,7 @@
       if (q.y < -m) { q.y = H2 + 10; q.x = Math.random() * (W2 - q.size); }
       if (q.y > H2 + m) { q.y = -m + 10; q.x = Math.random() * (W2 - q.size); }
       if (q.x < -q.size) q.x = W2; if (q.x > W2) q.x = -q.size;
-      q.el.style.transform = `translate(${q.x}px, ${q.y}px) rotate(${Math.cos(tt * .5) * 12 + q.pushX * 3}deg)`;
+      q.el.style.transform = `translate(${q.x}px, ${q.y}px) rotate(${Math.cos(tt * .5) * 12 + q.pushX * 3 + tiltX * 35}deg)`;
     }
     requestAnimationFrame(swimLoop);
   }
