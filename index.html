@@ -231,10 +231,10 @@
   .gj { position: absolute; left: 0; bottom: -110px; border: 0; background: none; padding: 6px; touch-action: manipulation; z-index: 1; will-change: transform; }
   body.jugando { overflow: hidden; }
   body.jugando .jellies { display: none; }
-  .full { position: fixed !important; inset: 0; height: auto !important; border-radius: 0 !important; border: 0 !important; z-index: 45; }
-  .full .hud { top: calc(12px + env(safe-area-inset-top, 0px)); left: calc(12px + env(safe-area-inset-left, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); }
+  .pantalla { position: fixed !important; inset: 0; height: auto !important; border-radius: 0 !important; border: 0 !important; z-index: 45; }
+  .pantalla .hud { top: calc(12px + env(safe-area-inset-top, 0px)); left: calc(12px + env(safe-area-inset-left, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); }
   .hud-x { display: none; border: 0; background: rgba(255,255,255,.9); border-radius: 999px; width: 38px; height: 38px; font: 700 1.05rem var(--display); color: #1f5671; }
-  .full .hud-x { display: block; }
+  .pantalla .hud-x { display: block; }
   .game-center .row { justify-content: center; }
   /* Juego de saltar */
   .jump { position: relative; height: 480px; border-radius: 24px; overflow: hidden; border: 2px solid var(--line); background: linear-gradient(#ffe1ea, var(--sea)); }
@@ -938,11 +938,11 @@
 
   /* Pantalla completa para los juegos */
   function abrirFull(el) {
-    el.classList.add('full'); document.body.classList.add('jugando');
+    el.classList.add('pantalla'); document.body.classList.add('jugando');
     try { const r = document.documentElement, f = r.requestFullscreen || r.webkitRequestFullscreen; if (f) { const pr = f.call(r); if (pr && pr.catch) pr.catch(() => {}); } } catch {}
   }
   function cerrarFull(el) {
-    el.classList.remove('full'); document.body.classList.remove('jugando');
+    el.classList.remove('pantalla'); document.body.classList.remove('jugando');
     try { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {}); } catch {}
   }
 
